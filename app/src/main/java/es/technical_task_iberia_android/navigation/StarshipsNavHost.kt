@@ -22,7 +22,7 @@ internal fun StarshipsNavHost(modifier: Modifier = Modifier) {
         modifier = modifier,
     ) {
         composable<SearchDestination> {
-            SearchRoute()
+            SearchRoute(onStarshipClick = { /* Detail navigation arrives in the detail PR. */ })
         }
     }
 }

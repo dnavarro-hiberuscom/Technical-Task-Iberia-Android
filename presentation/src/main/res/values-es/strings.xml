@@ -1,5 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="search_title">Naves estelares</string>
+    <string name="search_field_label">Buscar naves</string>
+    <string name="search_field_supporting">Nombre o modelo</string>
+    <string name="search_clear_action">Borrar búsqueda</string>
     <string name="search_initial_message">Escribe el nombre o el modelo de una nave para empezar a buscar.</string>
+    <string name="search_loading">Buscando…</string>
+    <string name="search_empty_message">Ninguna nave coincide con «%1$s».</string>
+    <string name="search_error_connectivity">No se pudo contactar con el servicio de naves. Comprueba tu conexión y edita la búsqueda para reintentar.</string>
+    <string name="search_error_unexpected">Algo salió mal al buscar. Edita la búsqueda para reintentar.</string>
+    <plurals name="search_results_count">
+        <item quantity="one">%1$d nave encontrada</item>
+        <item quantity="many">%1$d de naves encontradas</item>
+        <item quantity="other">%1$d naves encontradas</item>
+    </plurals>
+    <string name="search_result_summary">%1$s, %2$s</string>
 </resources>

@@ -1,5 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="search_title">Starships</string>
+    <string name="search_field_label">Search starships</string>
+    <string name="search_field_supporting">Name or model</string>
+    <string name="search_clear_action">Clear search</string>
     <string name="search_initial_message">Type the name or model of a starship to start searching.</string>
+    <string name="search_loading">Searching…</string>
+    <string name="search_empty_message">No starships match “%1$s”.</string>
+    <string name="search_error_connectivity">Could not reach the starships service. Check your connection and edit the search to try again.</string>
+    <string name="search_error_unexpected">Something went wrong while searching. Edit the search to try again.</string>
+    <plurals name="search_results_count">
+        <item quantity="one">%1$d starship found</item>
+        <item quantity="other">%1$d starships found</item>
+    </plurals>
+    <string name="search_result_summary">%1$s, %2$s</string>
 </resources>
