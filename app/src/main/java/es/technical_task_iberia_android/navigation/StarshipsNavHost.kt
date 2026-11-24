@@ -5,6 +5,8 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
+import es.technical_task_iberia_android.presentation.detail.DetailRoute
 import es.technical_task_iberia_android.presentation.search.SearchRoute
 import kotlinx.serialization.Serializable
 
@@ -12,7 +14,15 @@ import kotlinx.serialization.Serializable
 @Serializable
 internal data object SearchDestination
 
-/** Root navigation graph. Screens come from `:presentation`; this file only wires them. */
+/** Detail of one starship; only the id travels in the route. */
+@Serializable
+internal data class DetailDestination(val starshipId: Int)
+
+/**
+ * Root navigation graph. Screens come from `:presentation`; this file only wires them.
+ * The search entry stays in the back stack while the detail is open, so going back keeps the
+ * query and the results.
+ */
 @Composable
 internal fun StarshipsNavHost(modifier: Modifier = Modifier) {
     val navController = rememberNavController()
@@ -22,7 +32,15 @@ internal fun StarshipsNavHost(modifier: Modifier = Modifier) {
         modifier = modifier,
     ) {
         composable<SearchDestination> {
-            SearchRoute(onStarshipClick = { /* Detail navigation arrives in the detail PR. */ })
+            SearchRoute(
+                onStarshipClick = { starshipId -> navController.navigate(DetailDestination(starshipId)) },
+            )
+        }
+        composable<DetailDestination> { entry ->
+            DetailRoute(
+                starshipId = entry.toRoute<DetailDestination>().starshipId,
+                onBack = { navController.popBackStack() },
+            )
         }
     }
 }

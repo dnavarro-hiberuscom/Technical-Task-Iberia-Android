@@ -65,6 +65,13 @@ Read the root guide first (`../AGENTS.md`). Depends only on `:domain`.
   Compose tests use a stub repository and read texts from resources.
 - The clear icon is a vector in `res/drawable` to avoid the material-icons dependency.
 
-## Planned
+## Detail screen (done, PR 3)
 
-- PR 3: `DetailViewModel` and the detail screen (name, model, manufacturer, length, crew).
+- `detail/DetailViewModel(starshipId, GetStarship)`: loads on creation, exposes
+  `StateFlow<DetailUiState>` (`Loading`, `Content`, `Error(DetailError)`) and `onRetry()`.
+  The id arrives with `parametersOf(id)` (`koinViewModel(parameters = …)`).
+- `detail/DetailScreen`: public `DetailRoute(starshipId, onBack)`; shows name, model,
+  manufacturer, length and crew. Each label/value pair is one merged semantics node. Unknown values
+  use `detail_value_unknown`, length uses `detail_length_value` (`%1$s m`). The back action has a
+  localised name; `NotFound` has no retry button.
+- Tests: `DetailViewModelTest` (unit) and `DetailScreenTest` (Compose, unknown values, back, retry).
