@@ -1,0 +1,23 @@
+gradle.properties
+  s_033c76ec803950::t_722d08bb0be26c 18-19,21
+gradle/libs.versions.toml
+  s_033c76ec803950::t_068ffa4c984fa6 2,17,50-51
+presentation/build.gradle.kts
+  s_033c76ec803950::t_437eb91f462443 40-41
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "62d22a02ae6cd5841bad222bbe96ecf767666bf7",
+  "prompts": {},
+  "sessions": {
+    "s_033c76ec803950": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "350a6398-d221-49ee-87c7-666b24810102",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "David Navarro <dnavarro@hiberus.com>"
+    }
+  }
+}
