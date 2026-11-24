@@ -6,6 +6,7 @@ import es.technical_task_iberia_android.data.network.toDomain
 import es.technical_task_iberia_android.domain.model.SearchQuery
 import es.technical_task_iberia_android.domain.model.Starship
 import es.technical_task_iberia_android.domain.model.StarshipException
+import es.technical_task_iberia_android.domain.model.StarshipPage
 import es.technical_task_iberia_android.domain.repository.StarshipRepository
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
@@ -22,11 +23,18 @@ internal class StarshipRepositoryImpl(
     private val cache: SearchCache,
 ) : StarshipRepository {
 
-    override suspend fun searchStarships(query: SearchQuery): List<Starship> {
-        cache.get(query)?.let { return it }
-        val starships = request { service.searchStarships(query.value).results.map { it.toDomain() } }
-        cache.put(query, starships)
-        return starships
+    override suspend fun searchStarships(query: SearchQuery, page: Int): StarshipPage {
+        cache.get(query, page)?.let { return it }
+        val result = request {
+            val response = service.searchStarships(query.value, page)
+            StarshipPage(
+                starships = response.results.map { it.toDomain() },
+                nextPage = response.next?.let { page + 1 },
+            )
+        }
+        currentCoroutineContext().ensureActive()
+        cache.put(query, page, result)
+        return result
     }
 
     override suspend fun getStarship(id: Int): Starship =

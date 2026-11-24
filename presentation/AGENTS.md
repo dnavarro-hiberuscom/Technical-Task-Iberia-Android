@@ -1,77 +1,40 @@
-# :presentation · module guide
+# :presentation · Guía del módulo
 
-Read the root guide first (`../AGENTS.md`). Depends only on `:domain`.
+Lee primero [la guía del repositorio](../AGENTS.md). Entre los módulos del proyecto, `:presentation` depende únicamente de `:domain`.
 
-## Structure
+## Estructura
 
-- `designsystem/`: the single Material 3 theme (`StarshipsTheme`), colours with their contrast
-  pairs (`Color.kt`), typography, shapes, and spacing and size tokens (`Dimens.kt`, read through
-  `StarshipsTheme.spacing` / `StarshipsTheme.sizes`).
-- `di/presentationModule`: use cases as `factory`, ViewModels with `viewModelOf`.
-- One folder per screen (`search/`, and `detail/` in PR 3) with `XxxRoute` (public, used by
-  `:app`), `XxxScreen` (internal, no ViewModel, previewable and testable) and its ViewModel/state.
+- `designsystem/` reúne el tema Material 3 (`StarshipsTheme`), los colores y sus pares de contraste (`Color.kt`), la tipografía, las formas y las medidas de `Dimens.kt`. Accede al espaciado y a los tamaños con `StarshipsTheme.spacing` y `StarshipsTheme.sizes`.
+- `di/presentationModule` registra los casos de uso como `factory` y los ViewModels con `viewModelOf`.
+- Cada pantalla tiene su carpeta (`search/` y `detail/`), un `XxxRoute` público para `:app`, un `XxxScreen` interno que se puede previsualizar y probar sin ViewModel, y su ViewModel y estado.
 
-## Compose and MVVM
+## Compose y MVVM
 
-- Unidirectional flow: the screen emits events (`onQueryChange`, `onClearQuery`, …); the
-  ViewModel exposes a single read-only `StateFlow<XxxUiState>` that the Route observes with
-  `collectAsStateWithLifecycle()`.
-- The ViewModel receives its use cases in the constructor. It never uses `StarshipRepository`
-  nor resolves Koin dependencies inside the class.
-- Errors arrive as `StarshipException` and are translated into a typed state; the screen picks
-  the `stringResource`. No exception message reaches the UI.
-- `:presentation` may use `:domain` models to render content, but what it exposes to `:app` is
-  only composables with callbacks and `Int` ids.
+- El flujo es unidireccional. La pantalla emite eventos como `onQueryChange` y `onClearQuery`. El ViewModel expone un único `StateFlow<XxxUiState>` de solo lectura y el Route lo observa con `collectAsStateWithLifecycle()`.
+- El ViewModel recibe los casos de uso por constructor. Mantén el acceso a `StarshipRepository` y la resolución de dependencias de Koin fuera de la clase.
+- Los errores llegan como `StarshipException` y se convierten en un estado tipado. La pantalla elige el mensaje con `stringResource`. Los mensajes de excepción quedan fuera de la interfaz.
+- Usa los modelos de `:domain` para mostrar el contenido cuando corresponda. La API para `:app` consiste en composables con callbacks e IDs de tipo `Int`.
 
-## Theme, tokens and texts
+## Tema, medidas y textos
 
-- No colour, `dp` or `sp` literals outside `designsystem/`. If a token is missing, add it there.
-- Every app-owned text lives in resources (with arguments and `plurals` where needed), including
-  content descriptions and units. `res/values/strings.xml` is the English default and
-  `res/values-es/strings.xml` the Spanish translation; add every key to both. SWAPI data is
-  rendered as received.
+- Define los colores y las medidas en `dp` o `sp` en `designsystem/`. Añade allí las medidas que falten.
+- Guarda cada texto propio de la app en recursos, incluidas las descripciones de contenido y las unidades. Usa argumentos y `plurals` cuando corresponda. Añade cada clave al archivo base en inglés (`res/values/strings.xml`) y a la traducción al español (`res/values-es/strings.xml`). Los datos de SWAPI se muestran tal como llegan.
 
-## Accessibility
+## Accesibilidad
 
-- Search field with a persistent label, actions with a localised name (clear, back) and a touch
-  target of at least `StarshipsTheme.sizes.minTouchTarget`.
-- Each result row is a single focusable, clickable element; decorative images use
-  `contentDescription = null`.
-- States (loading, empty, error) are communicated with text; screen titles are `heading()`.
-  Check with a large font scale that nothing gets clipped.
+- Mantén una etiqueta persistente en el buscador, nombres localizados para las acciones de limpiar y volver y un área táctil de al menos `StarshipsTheme.sizes.minTouchTarget`.
+- Cada fila de resultados es un único elemento enfocable y pulsable. Para imágenes decorativas, usa `contentDescription = null`.
+- Comunica los estados de carga, vacío y error con texto y marca los títulos de pantalla con `heading()`. Comprueba que el contenido siga visible con un tamaño de letra grande.
 
-## Tests
+## Paginación de búsqueda
 
-- Unit (`src/test`): ViewModels with `kotlinx-coroutines-test` and virtual time, use cases with
-  fake repositories.
-- Compose (`src/androidTest`): semantics of the search field, row selection and detail, reading
-  texts from resources. Run with `./gradlew :presentation:connectedDebugAndroidTest`.
+El ViewModel mantiene los resultados al cargar la siguiente página y distingue la carga y el fallo del botón **Cargar más**. Una nueva edición cancela la carga pendiente y reinicia la lista.
 
-## Search screen (done, PR 2)
+## Imágenes de las naves
 
-- `search/SearchViewModel`: typed text → `MutableStateFlow` → `collectLatest`; inside the block
-  `delay(SearchDebounce)` and then `SearchStarships`. `onQueryChange` shows the text and `Loading`
-  at once (old results disappear) and `onClearQuery` goes back to `Initial`. After the use case
-  returns, `ensureActive()` prevents a cancelled search from writing state. `CancellationException`
-  is rethrown.
-- `search/SearchUiState`: `query` + `SearchContent` (`Initial`, `Loading`, `Results`, `Empty`,
-  `Error(SearchError)`). `SearchError` is a typed enum mapped to string resources in the screen.
-- `search/SearchDebounce`: the single 300 ms constant.
-- `search/SearchScreen`: public `SearchRoute(onStarshipClick)` (gets the ViewModel with
-  `koinViewModel()`), internal `SearchRoute(viewModel, …)` for tests and stateless `SearchScreen`.
-- Tests: `src/test/.../SearchViewModelTest` (virtual time; includes the guard that a new text
-  cancels the in-flight search before its own debounce elapses) and
-  `src/androidTest/.../SearchScreenTest` (field found by semantics and cleared, row selected).
-  Compose tests use a stub repository and read texts from resources.
-- The clear icon is a vector in `res/drawable` to avoid the material-icons dependency.
+`designsystem/StarshipImage` carga la imagen con Coil a partir del ID de SWAPI. Mantén en Presentation tanto la carga desde el CDN como el icono local de radar. Las pruebas de Compose usan el recurso local y respuestas controladas del repositorio.
 
-## Detail screen (done, PR 3)
+## Pruebas
 
-- `detail/DetailViewModel(starshipId, GetStarship)`: loads on creation, exposes
-  `StateFlow<DetailUiState>` (`Loading`, `Content`, `Error(DetailError)`) and `onRetry()`.
-  The id arrives with `parametersOf(id)` (`koinViewModel(parameters = …)`).
-- `detail/DetailScreen`: public `DetailRoute(starshipId, onBack)`; shows name, model,
-  manufacturer, length and crew. Each label/value pair is one merged semantics node. Unknown values
-  use `detail_value_unknown`, length uses `detail_length_value` (`%1$s m`). The back action has a
-  localised name; `NotFound` has no retry button.
-- Tests: `DetailViewModelTest` (unit) and `DetailScreenTest` (Compose, unknown values, back, retry).
+- **Unitarias (`src/test`).** ViewModels con `kotlinx-coroutines-test` y tiempo virtual. Casos de uso con repositorios simulados.
+- **Compose (`src/androidTest`).** Semántica del buscador, selección de una fila y detalle, con textos leídos de los recursos. Ejecuta `./gradlew :presentation:connectedDebugAndroidTest`.

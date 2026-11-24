@@ -4,6 +4,7 @@ import es.technical_task_iberia_android.domain.model.Quantity
 import es.technical_task_iberia_android.domain.model.SearchQuery
 import es.technical_task_iberia_android.domain.model.Starship
 import es.technical_task_iberia_android.domain.model.StarshipException
+import es.technical_task_iberia_android.domain.model.StarshipPage
 import es.technical_task_iberia_android.domain.repository.StarshipRepository
 import es.technical_task_iberia_android.domain.usecase.GetStarship
 import kotlinx.coroutines.Dispatchers
@@ -30,7 +31,7 @@ class DetailViewModelTest {
         var failure: StarshipException? = null
         lateinit var starship: Starship
 
-        override suspend fun searchStarships(query: SearchQuery): List<Starship> = error("Not used")
+        override suspend fun searchStarships(query: SearchQuery, page: Int): StarshipPage = error("Not used")
 
         override suspend fun getStarship(id: Int): Starship {
             calls++

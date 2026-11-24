@@ -1,6 +1,8 @@
 package es.technical_task_iberia_android.presentation.detail
 
 import androidx.activity.ComponentActivity
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
@@ -23,7 +25,11 @@ class DetailScreenTest {
     private fun string(id: Int, vararg args: Any) = rule.activity.getString(id, *args)
 
     private fun show(state: DetailUiState, onBack: () -> Unit = {}, onRetry: () -> Unit = {}) {
-        rule.setContent { StarshipsTheme { DetailScreen(state, onBack, onRetry) } }
+        rule.setContent {
+            CompositionLocalProvider(LocalInspectionMode provides true) {
+                StarshipsTheme { DetailScreen(state, onBack, onRetry) }
+            }
+        }
     }
 
     private val known = Starship(12, "X-wing", "T-65 X-wing", "Incom Corporation", Quantity.Known("12.5"), Quantity.Known("1"))

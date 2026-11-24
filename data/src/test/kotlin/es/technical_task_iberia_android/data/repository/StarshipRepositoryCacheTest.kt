@@ -1,6 +1,7 @@
 package es.technical_task_iberia_android.data.repository
 
 import es.technical_task_iberia_android.data.cache.SearchCache
+import es.technical_task_iberia_android.data.network.StarshipPageDto
 import es.technical_task_iberia_android.domain.model.SearchQuery
 import es.technical_task_iberia_android.domain.model.StarshipException
 import kotlinx.coroutines.CancellationException
@@ -43,6 +44,24 @@ class StarshipRepositoryCacheTest {
     }
 
     @Test
+    fun `each page is cached separately with its continuation and expiry`() = runTest {
+        service.nextLinks["wing"] = "https://swapi.dev/api/starships/?search=wing&page=2"
+        service.laterPages["wing" to 2] = StarshipPageDto(listOf(starshipDto("A-wing", 28)))
+
+        val first = repository.searchStarships(query("wing"))
+        clock += 1.minutes
+        val second = repository.searchStarships(query("wing"), page = 2)
+        clock += 2.minutes
+
+        assertEquals(2, first.nextPage)
+        assertEquals(listOf(28), second.starships.map { it.id })
+        assertEquals(null, second.nextPage)
+        assertEquals(second, repository.searchStarships(query(" WING "), page = 2))
+        assertEquals(first, repository.searchStarships(query("wing")))
+        assertEquals(listOf(1, 2, 1), service.pageCalls)
+    }
+
+    @Test
     fun `different queries have their own entry`() = runTest {
         repository.searchStarships(query("wing"))
         repository.searchStarships(query("falcon"))
@@ -71,7 +90,7 @@ class StarshipRepositoryCacheTest {
         val refreshed = repository.searchStarships(query("wing"))
 
         assertEquals(2, service.searchCalls.size)
-        assertEquals(listOf("A-wing"), refreshed.map { it.name })
+        assertEquals(listOf("A-wing"), refreshed.starships.map { it.name })
     }
 
     @Test
@@ -94,7 +113,7 @@ class StarshipRepositoryCacheTest {
         repository.searchStarships(query("zzzz"))
         val again = repository.searchStarships(query("zzzz"))
 
-        assertTrue(again.isEmpty())
+        assertTrue(again.starships.isEmpty())
         assertEquals(1, service.searchCalls.size)
     }
 
@@ -112,7 +131,7 @@ class StarshipRepositoryCacheTest {
         val result = repository.searchStarships(query("wing"))
 
         assertEquals(2, service.searchCalls.size)
-        assertEquals(2, result.size)
+        assertEquals(2, result.starships.size)
     }
 
     @Test

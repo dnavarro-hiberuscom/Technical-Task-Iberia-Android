@@ -1,7 +1,8 @@
 package es.technical_task_iberia_android.domain.usecase
 
+import es.technical_task_iberia_android.domain.model.FirstSearchPage
 import es.technical_task_iberia_android.domain.model.SearchQuery
-import es.technical_task_iberia_android.domain.model.Starship
+import es.technical_task_iberia_android.domain.model.StarshipPage
 import es.technical_task_iberia_android.domain.repository.StarshipRepository
 
 /**
@@ -11,9 +12,9 @@ import es.technical_task_iberia_android.domain.repository.StarshipRepository
  */
 class SearchStarships(private val repository: StarshipRepository) {
 
-    /** Returns the matches for [rawQuery], or an empty list without any call when it is blank. */
-    suspend operator fun invoke(rawQuery: String): List<Starship> {
-        val query = SearchQuery.from(rawQuery) ?: return emptyList()
-        return repository.searchStarships(query)
+    /** Returns the matches for [rawQuery], or an empty page without any call when it is blank. */
+    suspend operator fun invoke(rawQuery: String, page: Int = FirstSearchPage): StarshipPage {
+        val query = SearchQuery.from(rawQuery) ?: return StarshipPage(emptyList())
+        return repository.searchStarships(query, page)
     }
 }

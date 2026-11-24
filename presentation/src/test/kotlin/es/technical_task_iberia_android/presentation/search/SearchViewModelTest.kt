@@ -16,6 +16,7 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -46,6 +47,60 @@ class SearchViewModelTest {
         viewModel.onQueryChange(text)
         advanceTimeBy(SearchDebounce)
         runCurrent()
+    }
+
+    @Test
+    fun `loading another page keeps results and retries the same page after a failure`() = runTest(dispatcher) {
+        val first = starship(12, "X-wing")
+        val second = starship(11, "Y-wing")
+        type("wing")
+        repository.complete("wing", listOf(first), nextPage = 2)
+        runCurrent()
+
+        viewModel.onLoadMore()
+        viewModel.onLoadMore()
+        runCurrent()
+        assertEquals(SearchContent.Results(listOf(first), 2, NextPageStatus.Loading), state.content)
+        assertEquals(listOf("wing" to 1, "wing" to 2), repository.requestedPages)
+
+        repository.fail("wing", StarshipException.Connectivity(), page = 2)
+        runCurrent()
+        assertEquals(SearchContent.Results(listOf(first), 2, NextPageStatus.Failed), state.content)
+
+        viewModel.onLoadMore()
+        runCurrent()
+        repository.complete("wing", listOf(first, second), page = 2)
+        runCurrent()
+        viewModel.onLoadMore()
+        runCurrent()
+
+        assertEquals(SearchContent.Results(listOf(first, second)), state.content)
+        assertEquals(listOf("wing" to 1, "wing" to 2, "wing" to 2), repository.requestedPages)
+    }
+
+    @Test
+    fun `a new query cancels the next page before its own debounce completes`() = runTest(dispatcher) {
+        type("wing")
+        repository.complete("wing", listOf(starship(12, "X-wing")), nextPage = 2)
+        runCurrent()
+        viewModel.onLoadMore()
+        runCurrent()
+
+        viewModel.onQueryChange("falcon")
+        runCurrent()
+
+        assertEquals(listOf("wing" to 2), repository.cancelledPages)
+        assertEquals(listOf("wing" to 1, "wing" to 2), repository.requestedPages)
+        assertEquals(SearchContent.Loading, state.content)
+
+        repository.complete("wing", listOf(starship(11, "Y-wing")), page = 2)
+        advanceTimeBy(SearchDebounce)
+        runCurrent()
+        val falcon = starship(10, "Millennium Falcon")
+        repository.complete("falcon", listOf(falcon))
+        runCurrent()
+
+        assertEquals(SearchContent.Results(listOf(falcon)), state.content)
     }
 
     @Test
@@ -86,6 +141,7 @@ class SearchViewModelTest {
         runCurrent()
 
         assertEquals(listOf("falcon"), repository.started)
+        assertNull(state.cancelledQuery)
     }
 
     @Test
@@ -117,7 +173,30 @@ class SearchViewModelTest {
         // Regression guard: with debounce placed before collectLatest this would still be empty
         // until the 300 ms of "falcon" had elapsed.
         assertEquals(listOf("wing"), repository.cancelled)
+        assertEquals("wing", state.cancelledQuery)
         assertEquals(listOf("wing"), repository.started)
+    }
+
+    @Test
+    fun `clearing and immediately retyping the same query replaces the pending search`() = runTest(dispatcher) {
+        type("wing")
+        viewModel.onClearQuery()
+        viewModel.onQueryChange("wing")
+        runCurrent()
+        assertEquals(listOf("wing"), repository.cancelled)
+        advanceTimeBy(SearchDebounce)
+        runCurrent()
+        assertEquals(listOf("wing", "wing"), repository.started)
+    }
+
+    @Test
+    fun `editing after a completed search does not report a cancellation`() = runTest(dispatcher) {
+        type("wing")
+        repository.complete("wing", emptyList())
+        runCurrent()
+        viewModel.onQueryChange("falcon")
+        runCurrent()
+        assertNull(state.cancelledQuery)
     }
 
     @Test

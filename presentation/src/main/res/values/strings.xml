@@ -1,14 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="search_title">Starships</string>
+    <string name="search_title">Star Wars\nHangar</string>
     <string name="search_field_label">Search starships</string>
-    <string name="search_field_supporting">Name or model</string>
     <string name="search_clear_action">Clear search</string>
-    <string name="search_initial_message">Type the name or model of a starship to start searching.</string>
-    <string name="search_loading">Searching…</string>
+    <string name="search_prompt">Enter a starship name or model to see the results.</string>
+    <string name="search_loading">Searching for “%1$s”…</string>
+    <string name="search_cancelled">Previous search for “%1$s” cancelled.</string>
     <string name="search_empty_message">No starships match “%1$s”.</string>
+    <string name="search_empty_hint">Try a different name or model.</string>
     <string name="search_error_connectivity">Could not reach the starships service. Check your connection and edit the search to try again.</string>
     <string name="search_error_unexpected">Something went wrong while searching. Edit the search to try again.</string>
+    <string name="search_load_more">Load more</string>
+    <string name="search_loading_more">Loading more…</string>
+    <string name="search_retry_page">Retry</string>
+    <string name="search_next_page_error">Could not load more starships.</string>
+    <plurals name="search_results_loaded">
+        <item quantity="one">%1$d starship shown</item>
+        <item quantity="other">%1$d starships shown</item>
+    </plurals>
     <plurals name="search_results_count">
         <item quantity="one">%1$d starship found</item>
         <item quantity="other">%1$d starships found</item>

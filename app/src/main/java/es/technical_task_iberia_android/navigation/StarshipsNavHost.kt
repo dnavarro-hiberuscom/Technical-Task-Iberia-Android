@@ -1,9 +1,12 @@
 package es.technical_task_iberia_android.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import es.technical_task_iberia_android.presentation.detail.DetailRoute
@@ -24,8 +27,14 @@ internal data class DetailDestination(val starshipId: Int)
  * query and the results.
  */
 @Composable
-internal fun StarshipsNavHost(modifier: Modifier = Modifier) {
+internal fun StarshipsNavHost(
+    modifier: Modifier = Modifier,
+    onDetailVisibilityChanged: (Boolean) -> Unit = {},
+) {
     val navController = rememberNavController()
+    val entry = navController.currentBackStackEntryAsState().value
+    val isDetail = entry?.destination?.hasRoute<DetailDestination>() == true
+    SideEffect { onDetailVisibilityChanged(isDetail) }
     NavHost(
         navController = navController,
         startDestination = SearchDestination,

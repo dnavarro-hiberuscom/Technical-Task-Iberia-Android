@@ -14,8 +14,9 @@ internal data class StarshipDto(
     val url: String,
 )
 
-/** A page of `GET /starships/?search=…`. Only the first page is used. */
+/** A page of `GET /starships/?search=…`. The next link indicates whether there are more matches. */
 @Serializable
 internal data class StarshipPageDto(
     val results: List<StarshipDto>,
+    val next: String? = null,
 )
