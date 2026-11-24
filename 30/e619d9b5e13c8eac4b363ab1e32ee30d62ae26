@@ -1,0 +1,117 @@
+presentation/src/main/res/drawable/ic_rebel_crest.xml
+  s_033c76ec803950::t_c86f5bedbeff90 1-5
+presentation/src/main/kotlin/es/technical_task_iberia_android/presentation/designsystem/Dimens.kt
+  s_033c76ec803950::t_9f512d386162b0 21-32
+presentation/src/main/kotlin/es/technical_task_iberia_android/presentation/detail/DetailScreen.kt
+  s_033c76ec803950::t_020168fe6e0e54 3,7-17,20-21,29,34,37,42-43,46,55-61,99-100,103-104,106,109-112,115,123-154,158,160-161,163-244,246-250,256-264,266-326
+presentation/AGENTS.md
+  s_033c76ec803950::t_ba4b3ea3ee5c26 1,3,5,7-9,11,13-16,18,20-21,23,25-27,29,31,33,35,37,39-40
+docs/technical-decisions.md
+  s_033c76ec803950::t_6c7cd4c38700b5 1-66
+presentation/src/test/kotlin/es/technical_task_iberia_android/presentation/search/SearchViewModelTest.kt
+  s_033c76ec803950::t_f52a480afd23d1 19,52-105,144,176,180-201
+data/src/main/kotlin/es/technical_task_iberia_android/data/repository/StarshipRepositoryImpl.kt
+  s_033c76ec803950::t_f3fcf8b3459bf8 9,26-37
+app/src/main/java/es/technical_task_iberia_android/MainActivity.kt
+  s_033c76ec803950::t_c124a20fb19256 3-4,7,10-11,18,21-27
+presentation/src/main/kotlin/es/technical_task_iberia_android/presentation/search/SearchResults.kt
+  s_033c76ec803950::t_9b216fb3435f2e 1-184
+domain/src/main/kotlin/es/technical_task_iberia_android/domain/usecase/SearchStarships.kt
+  s_033c76ec803950::t_b657a5a5b8804a 3,5,15-18
+AGENTS.md
+  s_033c76ec803950::t_246d79d31feeba 1,3,5,7,9-10,13,16,18-53,56-57,59-60
+app/src/main/res/drawable/ic_launcher_foreground.xml
+  s_033c76ec803950::t_956c096855a420 1,8-18
+presentation/src/main/kotlin/es/technical_task_iberia_android/presentation/search/SearchUiState.kt
+  s_033c76ec803950::t_fd991072f26fd6 9,21-25,33-38
+README.md
+  s_033c76ec803950::t_8530c0c1fd8b28 3,7,9-11,13-15,17,19-27,30-33,36,38,40-46,48-70,73,75-89,91
+presentation/src/main/kotlin/es/technical_task_iberia_android/presentation/designsystem/StarshipImage.kt
+  s_033c76ec803950::t_014d4ded7ed649 1-32
+presentation/src/main/res/drawable/ic_forward.xml
+  s_033c76ec803950::t_cd14afad4c8ffb 1-5
+presentation/src/androidTest/kotlin/es/technical_task_iberia_android/presentation/search/SearchScreenTest.kt
+  s_033c76ec803950::t_2b5b85431ed188 4-8,10,17-18,25,30-31,46-47,54-55,57-60,75-81,83,86-87,99-100,110,120-172,183
+presentation/src/main/res/values-es/strings.xml
+  s_033c76ec803950::t_d59ebc4a790a9f 3,6-8,10,13-21
+presentation/build.gradle.kts
+  s_033c76ec803950::t_f9949c099d4365 40-41
+presentation/src/androidTest/kotlin/es/technical_task_iberia_android/presentation/detail/DetailScreenTest.kt
+  s_033c76ec803950::t_aa8a150a679628 4-5,28-32
+presentation/src/main/res/values/strings.xml
+  s_033c76ec803950::t_db5a21111650ed 3,6-8,10,13-20
+presentation/src/main/kotlin/es/technical_task_iberia_android/presentation/designsystem/Shape.kt
+  s_033c76ec803950::t_ced134489e6501 3,5,7-10
+app/src/main/java/es/technical_task_iberia_android/navigation/StarshipsNavHost.kt
+  s_033c76ec803950::t_47aa1d0608ea3e 4,6,9,30-33,35-37
+data/AGENTS.md
+  s_033c76ec803950::t_f9428955a818ca 1,3,5,7,9,11-15,17,19
+app/AGENTS.md
+  s_033c76ec803950::t_640eac15a6df9e 1,3,5,7-10,12,14-17,19,21-23
+presentation/src/test/kotlin/es/technical_task_iberia_android/presentation/search/FakeStarshipRepository.kt
+  s_033c76ec803950::t_2a5f5a528cf3f1 6,19,21-24,26-28,33,40-41,44-45
+domain/src/main/kotlin/es/technical_task_iberia_android/domain/model/StarshipPage.kt
+  s_033c76ec803950::t_7abf2d42b5e3d1 1-8
+data/src/main/kotlin/es/technical_task_iberia_android/data/network/StarshipDto.kt
+  s_033c76ec803950::t_d97439380436c2 17,21
+data/src/main/kotlin/es/technical_task_iberia_android/data/cache/SearchCache.kt
+  s_033c76ec803950::t_3d0e3351ba1428 4,15,24-25,27,30-31,37,40-42
+data/src/test/kotlin/es/technical_task_iberia_android/data/repository/StarshipRepositoryCacheTest.kt
+  s_033c76ec803950::t_1dadedc603329e 4,46-63,93,116,134
+domain/AGENTS.md
+  s_033c76ec803950::t_5f1183cb8059a9 1,3,5,7,9-15,17,19-20
+gradle.properties
+  s_033c76ec803950::t_ee19c0e8b47473 18-19,21
+presentation/src/main/kotlin/es/technical_task_iberia_android/presentation/search/SearchViewModel.kt
+  s_033c76ec803950::t_932c4661fa2e0e 9,18,32-36,42,48-51,54-55,58,63-85,90-95,97-102,107-110,113-115
+data/src/test/kotlin/es/technical_task_iberia_android/data/repository/FakeStarshipService.kt
+  s_033c76ec803950::t_a46648c28cf072 11-13,17,19,21-24
+domain/src/main/kotlin/es/technical_task_iberia_android/domain/repository/StarshipRepository.kt
+  s_033c76ec803950::t_95adb80ba77150 3,6,16-17
+presentation/src/main/kotlin/es/technical_task_iberia_android/presentation/search/SearchScreen.kt
+  s_033c76ec803950::t_3b35ff6799f1f8 3,6-7,10-11,13,19-21,25,55,68,70-72,74,80-81,83-108
+presentation/src/main/kotlin/es/technical_task_iberia_android/presentation/search/SearchFeedback.kt
+  s_033c76ec803950::t_a644aa0bd483ee 1-156
+app/src/main/res/drawable/ic_launcher_background.xml
+  s_033c76ec803950::t_f2c33692b8e8bc 3,8-17
+app/src/androidTest/kotlin/es/technical_task_iberia_android/SearchToDetailFlowTest.kt
+  s_033c76ec803950::t_9facf5e2851063 4-5,18,46-47,68-72
+presentation/src/main/res/drawable/ic_search.xml
+  s_033c76ec803950::t_674b16ade6cf06 1-5
+gradle/libs.versions.toml
+  s_033c76ec803950::t_c6a4491cb60d5b 2,17,50-51
+presentation/src/main/res/drawable/blueprint_locator.xml
+  s_033c76ec803950::t_bca594c58fa8b4 1-7
+presentation/src/main/kotlin/es/technical_task_iberia_android/presentation/search/SearchHeader.kt
+  s_033c76ec803950::t_2866db530d7b6a 1-150
+presentation/src/main/kotlin/es/technical_task_iberia_android/presentation/designsystem/Type.kt
+  s_033c76ec803950::t_29b185d62429f5 4-6,8-35
+data/src/main/kotlin/es/technical_task_iberia_android/data/network/StarshipService.kt
+  s_033c76ec803950::t_93dcd21155b93f 13,15-18
+domain/src/test/kotlin/es/technical_task_iberia_android/domain/usecase/SearchStarshipsTest.kt
+  s_033c76ec803950::t_9a02339ae12e7f 7,35,38,43,47,52,54,59,61,66
+presentation/src/test/kotlin/es/technical_task_iberia_android/presentation/detail/DetailViewModelTest.kt
+  s_033c76ec803950::t_d9b525c58d74f3 7,34
+presentation/src/main/res/drawable/ic_archive_stripe.xml
+  s_033c76ec803950::t_2ee5530857e4f9 1-5
+presentation/src/main/kotlin/es/technical_task_iberia_android/presentation/designsystem/Color.kt
+  s_033c76ec803950::t_2ff24d423b88fb 3,6,9-17,19-20,22-36,39-75
+presentation/src/main/kotlin/es/technical_task_iberia_android/presentation/search/SearchPreviews.kt
+  s_033c76ec803950::t_a10ca6f849d829 1-26
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "30e619d9b5e13c8eac4b363ab1e32ee30d62ae26",
+  "prompts": {},
+  "sessions": {
+    "s_033c76ec803950": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "350a6398-d221-49ee-87c7-666b24810102",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "David Navarro <dnavarro@hiberus.com>"
+    }
+  }
+}
