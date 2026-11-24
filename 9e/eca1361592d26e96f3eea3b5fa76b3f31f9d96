@@ -1,0 +1,31 @@
+README.md
+  s_033c76ec803950::t_72b0489c00f004 19
+  s_033c76ec803950::t_17110e80aa298a 30
+docs/technical-decisions.md
+  s_033c76ec803950::t_fbc9bbb4a35999 30
+  s_033c76ec803950::t_f0144d3d5843fd 32
+  s_033c76ec803950::t_2cee857e920b92 36
+  s_033c76ec803950::t_140f52744a4fa1 28
+  s_033c76ec803950::t_21adc933012430 40
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "9eeca1361592d26e96f3eea3b5fa76b3f31f9d96",
+  "prompts": {},
+  "humans": {
+    "h_3a16911fd9535c": {
+      "author": "David Navarro <dnavarro@hiberus.com>"
+    }
+  },
+  "sessions": {
+    "s_033c76ec803950": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "350a6398-d221-49ee-87c7-666b24810102",
+        "model": "unknown"
+      },
+      "human_author": "David Navarro <dnavarro@hiberus.com>"
+    }
+  }
+}
