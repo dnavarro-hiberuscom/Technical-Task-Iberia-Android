@@ -12,7 +12,7 @@ Before touching a module, read this guide and that module's guide (`<module>/AGE
 |---|---|
 | Four modules, shared theme, Koin, root navigation, entry screen | Done (PR 1) |
 | `Starship` model, `SearchQuery`, `StarshipException` and the `StarshipRepository` contract | Done (PR 1) |
-| Search: `SearchStarships`, Retrofit, DTOs, 3-minute cache, `SearchViewModel`, list | Planned (PR 2) |
+| Search: `SearchStarships`, Retrofit, DTOs, 3-minute cache, `SearchViewModel`, list | Done (PR 2) |
 | Detail: `GetStarship`, `DetailViewModel`, screen, back-and-forth navigation | Planned (PR 3) |
 | Koin graph `verify()`, architecture test, README | Planned (PR 3) |
 
@@ -41,13 +41,13 @@ Rules Gradle does not enforce, reviewed in every PR (PR 3 turns them into an aut
   that take callbacks and simple identifiers (`Int`).
 - Module dependencies are declared with `implementation`.
 
-## Planned flow
+## Flow
 
-- **Search (PR 2):** text field → `SearchViewModel` (query Flow + `collectLatest`, 300 ms wait
+- **Search (done, PR 2):** text field → `SearchViewModel` (query Flow + `collectLatest`, 300 ms wait
   inside the cancellable block) → `SearchStarships` → `StarshipRepository` (3-minute in-memory
   cache per normalised query) → `GET /api/starships/?search=…` → list.
   Only the first page of results is used.
-- **Detail (PR 3):** row → `navController` with the `id` → `DetailViewModel` → `GetStarship`
+- **Detail (planned, PR 3):** row → `navController` with the `id` → `DetailViewModel` → `GetStarship`
   → `GET /api/starships/{id}/`. The `id` comes from the resource URL.
 
 ## Common conventions
@@ -76,8 +76,8 @@ Requirements: JDK 17+ for Gradle (Android Studio bundles one), Android SDK 37.
 
 ```bash
 ./gradlew assembleDebug               # builds every module
-./gradlew test                        # unit tests (JVM)
+./gradlew test                        # unit tests (JVM): domain, data cache/mapping, ViewModel
 ./gradlew lint                        # Android Lint
-./gradlew connectedDebugAndroidTest   # Compose tests (emulator or device)
+./gradlew connectedDebugAndroidTest   # Compose tests in :presentation (emulator or device)
 ./gradlew installDebug                # installs the app
 ```

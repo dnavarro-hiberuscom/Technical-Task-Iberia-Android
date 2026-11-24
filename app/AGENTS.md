@@ -9,6 +9,8 @@ Read the root guide first (`../AGENTS.md`).
 - `MainActivity`: applies `StarshipsTheme` once and renders `StarshipsNavHost`.
 - `navigation/StarshipsNavHost`: root graph with type-safe routes (`@Serializable`). Each
   destination calls a public composable from `:presentation` and passes callbacks or simple ids.
+  Today `SearchRoute(onStarshipClick)` receives a no-op callback until the detail destination exists.
+- `AndroidManifest.xml` declares the `INTERNET` permission the data layer needs.
 
 ## Rules
 

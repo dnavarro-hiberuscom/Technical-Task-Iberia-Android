@@ -16,9 +16,13 @@ If a change needs one of those libraries, it does not belong here.
 - `model/StarshipException`: `Connectivity`, `NotFound`, `Unexpected`. Cancellation is never wrapped.
 - `repository/StarshipRepository`: contract with `suspend` functions, implemented in `:data`.
 
+- `usecase/SearchStarships`: `invoke(rawQuery)` builds a `SearchQuery`; blank → empty list without
+  calling the repository; otherwise `repository.searchStarships(query)`.
+- Tests (`src/test`, MockK): blank query without calls, trimming, returned results, empty results,
+  failures reaching the caller.
+
 ## Planned
 
-- PR 2: `SearchStarships` (blank text → empty list without calling the repository).
 - PR 3: `GetStarship`.
 
 ## Rules

@@ -14,3 +14,9 @@ kotlin {
         jvmTarget = JvmTarget.JVM_11
     }
 }
+
+dependencies {
+    testImplementation(libs.junit)
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.mockk)
+}

@@ -45,9 +45,26 @@ Read the root guide first (`../AGENTS.md`). Depends only on `:domain`.
 - Unit (`src/test`): ViewModels with `kotlinx-coroutines-test` and virtual time, use cases with
   fake repositories.
 - Compose (`src/androidTest`): semantics of the search field, row selection and detail, reading
-  texts from resources.
+  texts from resources. Run with `./gradlew :presentation:connectedDebugAndroidTest`.
+
+## Search screen (done, PR 2)
+
+- `search/SearchViewModel`: typed text → `MutableStateFlow` → `collectLatest`; inside the block
+  `delay(SearchDebounce)` and then `SearchStarships`. `onQueryChange` shows the text and `Loading`
+  at once (old results disappear) and `onClearQuery` goes back to `Initial`. After the use case
+  returns, `ensureActive()` prevents a cancelled search from writing state. `CancellationException`
+  is rethrown.
+- `search/SearchUiState`: `query` + `SearchContent` (`Initial`, `Loading`, `Results`, `Empty`,
+  `Error(SearchError)`). `SearchError` is a typed enum mapped to string resources in the screen.
+- `search/SearchDebounce`: the single 300 ms constant.
+- `search/SearchScreen`: public `SearchRoute(onStarshipClick)` (gets the ViewModel with
+  `koinViewModel()`), internal `SearchRoute(viewModel, …)` for tests and stateless `SearchScreen`.
+- Tests: `src/test/.../SearchViewModelTest` (virtual time; includes the guard that a new text
+  cancels the in-flight search before its own debounce elapses) and
+  `src/androidTest/.../SearchScreenTest` (field found by semantics and cleared, row selected).
+  Compose tests use a stub repository and read texts from resources.
+- The clear icon is a vector in `res/drawable` to avoid the material-icons dependency.
 
 ## Planned
 
-- PR 2: `SearchViewModel`, initial/loading/data/empty/error states, field with clear action and list.
 - PR 3: `DetailViewModel` and the detail screen (name, model, manufacturer, length, crew).
