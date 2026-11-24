@@ -1,32 +1,19 @@
-# :data · module guide
+# :data · Guía del módulo
 
-Read the root guide first (`../AGENTS.md`). Depends only on `:domain`.
+Lee primero [la guía del repositorio](../AGENTS.md). Entre los módulos del proyecto, `:data` depende únicamente de `:domain`.
 
-## Public surface
+## API pública
 
-Only `di/dataModule`. Everything else (Retrofit service, DTOs, mapping, cache, clock,
-repository) is `internal`.
+`di/dataModule` es el punto de entrada público. El servicio Retrofit, los DTO, el mapeo, la caché, el reloj y el repositorio son `internal`.
 
-## Implemented (PR 2)
+## Red y caché
 
-- `network/StarshipService`: Retrofit, `GET starships/?search=…` (first page only, by decision) and
-  `GET starships/{id}/`, both `suspend`, so cancelling the coroutine cancels the HTTP call.
-  `SwapiBaseUrl = https://swapi.dev/api/`.
-- `network/StarshipDto`, `StarshipMapper`: internal DTOs with the used fields (`ignoreUnknownKeys`);
-  the id is extracted from `url`; `unknown`, `n/a` or blank → `Quantity.Unknown`; figures are kept
-  as published (`1,600`, `30-165`).
-- `repository/StarshipRepositoryImpl`: owns the cache and translates errors. `IOException` →
-  `Connectivity` (after `ensureActive()`, so a cancelled call is not reported as a failure), HTTP
-  404 → `NotFound`, other HTTP errors and `SerializationException` → `Unexpected`.
-  `CancellationException` is never caught.
-- `cache/SearchCache`: in memory, key = `SearchQuery.value.lowercase()`. `SearchCacheTtl = 3.minutes`
-  from the moment a successful response arrives; an entry is valid while `age < SearchCacheTtl`.
-  Empty lists are stored; errors and cancellations are not. Time comes from an injected
-  monotonic `TimeSource` (`TimeSource.Monotonic` in production, `TestTimeSource` in tests).
-- `di/dataModule`: `OkHttpClient`, `StarshipService` and `StarshipRepository` as `single`.
+- `network/StarshipService` declara las peticiones Retrofit `GET starships/?search=…&page=…` y `GET starships/{id}/`. Las dos son `suspend`, así que cancelar la corrutina cancela la petición HTTP. La URL base es `SwapiBaseUrl = https://swapi.dev/api/`.
+- `network/StarshipDto` y `StarshipMapper` trabajan con los campos que usa la app (`ignoreUnknownKeys`). El ID se extrae de `url`. Los valores `unknown`, `n/a` o vacíos se convierten en `Quantity.Unknown`. Las cifras conservan el formato de origen (`1,600`, `30-165`).
+- `repository/StarshipRepositoryImpl` gestiona la caché y traduce los errores. `IOException` se convierte en `Connectivity` tras comprobar `ensureActive()`, para excluir llamadas canceladas. HTTP 404 se convierte en `NotFound`. Otros errores HTTP y `SerializationException` se convierten en `Unexpected`. `CancellationException` se propaga.
+- `cache/SearchCache` vive en memoria y usa el texto de `SearchQuery.value.lowercase()` y el número de página como clave. La respuesta conserva si SWAPI indica otra página en `next`. `SearchCacheTtl = 3.minutes` empieza cuando llega una respuesta correcta y la entrada es válida mientras `age < SearchCacheTtl`. Se guardan las listas vacías. Los errores y las cancelaciones se descartan. El reloj se inyecta mediante `TimeSource`, con `TimeSource.Monotonic` en producción y `TestTimeSource` en pruebas.
+- `di/dataModule` registra `OkHttpClient`, `StarshipService` y `StarshipRepository` como `single`.
 
-## Tests
+## Pruebas
 
-Deterministic and offline (`src/test`): `FakeStarshipService` + `TestTimeSource`. Covered: two equivalent
-searches → one call; different queries → separate entries; hit just before expiry; new call
-exactly at 3 minutes; reuse of the refreshed value; retry after a failure.
+Las pruebas de `src/test` se ejecutan sin red con `FakeStarshipService` y `TestTimeSource`. Comprueban que dos consultas equivalentes hacen una sola llamada, que distintas consultas tienen entradas independientes, que se reutiliza la caché justo antes de caducar, que a los tres minutos se hace una nueva llamada, que se reutiliza el valor actualizado y que se puede reintentar después de un fallo.

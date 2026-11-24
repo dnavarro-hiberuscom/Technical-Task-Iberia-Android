@@ -1,35 +1,23 @@
-# :app · module guide
+# :app · Guía del módulo
 
-Read the root guide first (`../AGENTS.md`).
+Lee primero [la guía del repositorio](../AGENTS.md).
 
-`:app` only assembles the application. It contains:
+`:app` ensambla la aplicación. Contiene los siguientes puntos de entrada.
 
-- `StarshipsApplication`: starts Koin with `appModules` (`dataModule` + `presentationModule`).
-  It is the **only** file that imports from `:data`, and only `data.di.dataModule`.
-- `MainActivity`: applies `StarshipsTheme` once and renders `StarshipsNavHost`.
-- `navigation/StarshipsNavHost`: root graph with type-safe routes (`@Serializable`). Each
-  destination calls a public composable from `:presentation` and passes callbacks or simple ids.
-  `SearchDestination` is the start; `DetailDestination(starshipId: Int)` carries only the id and
-  `entry.toRoute()` reads it. Going back pops the detail, so the search entry keeps its ViewModel,
-  query and results.
-- `AndroidManifest.xml` declares the `INTERNET` permission the data layer needs.
+- `StarshipsApplication` inicia Koin con `appModules` (`dataModule` y `presentationModule`). Es el único archivo que importa desde `:data` y usa únicamente `data.di.dataModule`.
+- `MainActivity` aplica `StarshipsTheme` una vez y muestra `StarshipsNavHost`.
+- `navigation/StarshipsNavHost` define el grafo raíz con rutas seguras en tipos (`@Serializable`). Cada destino llama a un composable público de `:presentation` y le pasa callbacks o IDs simples. `SearchDestination` es el inicio. `DetailDestination(starshipId: Int)` lleva el ID y `entry.toRoute()` lo lee. Al volver se retira el detalle de la pila, de modo que la búsqueda conserva su ViewModel, consulta y resultados.
+- `AndroidManifest.xml` declara el permiso `INTERNET` que necesita Data.
 
-## Rules
+## Reglas
 
-- No search logic, networking, cache or repositories in the Activity or in navigation.
-- Do not import `:domain` models or use cases; if a value is needed, `:presentation` exposes a
-  callback with a simple type.
-- Screen texts and the theme live in `:presentation`; only `app_name` lives here.
-- A new destination = a `@Serializable` route + `composable<Route> { XxxRoute(...) }`.
+- Mantén la lógica de búsqueda, red, caché y repositorios fuera de la actividad y de la navegación.
+- Usa callbacks con tipos simples de `:presentation` cuando necesites un valor. Mantén los modelos y casos de uso de `:domain` fuera de `:app`.
+- Los textos de pantalla y el tema viven en `:presentation`. Aquí se define `app_name`.
+- Para añadir un destino, declara una ruta `@Serializable` y regístrala con `composable<Route> { XxxRoute(...) }`.
 
-## Tests
+## Pruebas
 
-- `src/test/KoinGraphTest`: `verify()` of `appModules` (`Int` is an extra type because
-  `DetailViewModel` receives the id with `parametersOf`).
-- `src/test/ArchitectureRulesTest`: only `StarshipsApplication` imports `dataModule`; `:app` does
-  not import `:domain`; `:presentation` and `:domain` never reference `:data`; ViewModels use only
-  use cases and models, with no repository and no Koin lookups.
-- `src/androidTest/SearchToDetailFlowTest`: real root graph and real Koin modules with only the
-  repository replaced (`loadKoinModules`). It needs `androidTestImplementation(project(":domain"))`,
-  which is test-only. `build.gradle.kts` has a `concurrent-futures` constraint because AGP aligns
-  the test and runtime classpaths.
+- `src/test/KoinGraphTest` ejecuta `verify()` sobre `appModules`. Declara `Int` como tipo adicional porque `DetailViewModel` recibe el ID con `parametersOf`.
+- `src/test/ArchitectureRulesTest` comprueba el acceso a `dataModule` desde `StarshipsApplication`, la separación de `:app` y `:domain`, y que `:presentation` y `:domain` carezcan de referencias a `:data`. Los ViewModels usan casos de uso y modelos, sin acceder al repositorio ni resolver dependencias de Koin.
+- `src/androidTest/SearchToDetailFlowTest` usa el grafo raíz y los módulos reales de Koin. Sustituye el repositorio mediante `loadKoinModules`. Usa `androidTestImplementation(project(":domain"))`, una dependencia de pruebas. `build.gradle.kts` incluye una restricción de `concurrent-futures` porque AGP alinea los classpaths de pruebas y ejecución.

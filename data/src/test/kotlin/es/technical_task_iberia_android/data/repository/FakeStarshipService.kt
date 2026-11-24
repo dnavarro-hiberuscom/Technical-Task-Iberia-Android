@@ -8,13 +8,20 @@ import es.technical_task_iberia_android.data.network.StarshipService
 internal class FakeStarshipService : StarshipService {
 
     val searchCalls = mutableListOf<String>()
+    val pageCalls = mutableListOf<Int>()
+    val laterPages = mutableMapOf<Pair<String, Int>, StarshipPageDto>()
+    val nextLinks = mutableMapOf<String, String>()
     val responses = mutableMapOf<String, List<StarshipDto>>()
     var failure: Throwable? = null
 
-    override suspend fun searchStarships(query: String): StarshipPageDto {
+    override suspend fun searchStarships(query: String, page: Int): StarshipPageDto {
         searchCalls += query
+        pageCalls += page
         failure?.let { throw it }
-        return StarshipPageDto(results = responses[query].orEmpty())
+        return laterPages[query to page] ?: StarshipPageDto(
+            results = responses[query].orEmpty(),
+            next = nextLinks[query],
+        )
     }
 
     override suspend fun getStarship(id: Int): StarshipDto {

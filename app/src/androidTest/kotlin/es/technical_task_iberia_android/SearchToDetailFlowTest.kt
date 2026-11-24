@@ -1,6 +1,8 @@
 package es.technical_task_iberia_android
 
 import androidx.activity.ComponentActivity
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertTextContains
 import androidx.compose.ui.test.hasSetTextAction
@@ -13,6 +15,7 @@ import androidx.compose.ui.test.performTextInput
 import es.technical_task_iberia_android.domain.model.Quantity
 import es.technical_task_iberia_android.domain.model.SearchQuery
 import es.technical_task_iberia_android.domain.model.Starship
+import es.technical_task_iberia_android.domain.model.StarshipPage
 import es.technical_task_iberia_android.domain.repository.StarshipRepository
 import es.technical_task_iberia_android.navigation.StarshipsNavHost
 import es.technical_task_iberia_android.presentation.R
@@ -40,8 +43,8 @@ class SearchToDetailFlowTest {
     private val controlledData = module {
         single<StarshipRepository> {
             object : StarshipRepository {
-                override suspend fun searchStarships(query: SearchQuery) =
-                    if (query.value == "wing") listOf(xWing, yWing) else emptyList()
+                override suspend fun searchStarships(query: SearchQuery, page: Int) =
+                    StarshipPage(if (query.value == "wing") listOf(xWing, yWing) else emptyList())
 
                 override suspend fun getStarship(id: Int) = listOf(xWing, yWing).first { it.id == id }
             }
@@ -62,7 +65,11 @@ class SearchToDetailFlowTest {
 
     @Test
     fun searchOpenDetailAndGoBackKeepsTheQuery() {
-        rule.setContent { StarshipsTheme { StarshipsNavHost() } }
+        rule.setContent {
+            CompositionLocalProvider(LocalInspectionMode provides true) {
+                StarshipsTheme { StarshipsNavHost() }
+            }
+        }
 
         rule.onNode(hasSetTextAction()).performTextInput("wing")
         waitForText("X-wing")

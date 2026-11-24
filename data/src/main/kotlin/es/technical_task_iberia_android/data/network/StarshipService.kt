@@ -10,9 +10,12 @@ import retrofit2.http.Query
  */
 internal interface StarshipService {
 
-    /** `GET /api/starships/?search=…`: first page of matches. */
+    /** `GET /api/starships/?search=…&page=…`. */
     @GET("starships/")
-    suspend fun searchStarships(@Query("search") query: String): StarshipPageDto
+    suspend fun searchStarships(
+        @Query("search") query: String,
+        @Query("page") page: Int,
+    ): StarshipPageDto
 
     /** `GET /api/starships/{id}/`. */
     @GET("starships/{id}/")

@@ -1,84 +1,61 @@
-# Starships · repository guide
+# Starships · Guía del repositorio
 
-Native Android app (Kotlin + Jetpack Compose) that searches starships on
-[SWAPI](https://swapi.dev/documentation) (`/api/starships/`) and shows their detail.
-Technical assessment: clarity, layer separation, correct cancellation and caching come first.
+App nativa de Android con Kotlin y Jetpack Compose. Busca naves en [SWAPI](https://swapi.dev/documentation) (`/api/starships/`) y muestra su ficha. Para la prueba técnica se priorizan la claridad, la separación de responsabilidades, la cancelación y la caché.
 
-Before touching a module, read this guide and that module's guide (`<module>/AGENTS.md`).
+Antes de modificar un módulo, lee esta guía y la del módulo (`<módulo>/AGENTS.md`).
 
-## Status
+## Mapa de módulos
 
-| Block | Status |
-|---|---|
-| Four modules, shared theme, Koin, root navigation, entry screen | Done (PR 1) |
-| `Starship` model, `SearchQuery`, `StarshipException` and the `StarshipRepository` contract | Done (PR 1) |
-| Search: `SearchStarships`, Retrofit, DTOs, 3-minute cache, `SearchViewModel`, list | Done (PR 2) |
-| Detail: `GetStarship`, `DetailViewModel`, screen, back-and-forth navigation | Done (PR 3) |
-| Koin graph `verify()`, architecture test, README | Done (PR 3) |
-
-## Module map
-
-```
-:app          → :presentation, :data   (assembly only)
+```text
+:app          → :presentation, :data   (solo ensamblaje)
 :presentation → :domain
 :data         → :domain
-:domain       → (no project module)
+:domain       → ningún otro módulo del proyecto
 ```
 
-| Module | Type | Contains |
+| Módulo | Tipo | Contenido |
 |---|---|---|
-| `:app` | Android app | `StarshipsApplication` (Koin), `MainActivity`, `navigation/StarshipsNavHost` |
-| `:presentation` | Android library + Compose | Screens, ViewModels, UI state, `designsystem/`, `di/presentationModule` |
-| `:domain` | Pure Kotlin/JVM | Models, `StarshipRepository` contract, use cases |
-| `:data` | Android library | Retrofit, DTOs, mapping, cache, repository (all `internal`), `di/dataModule` |
+| `:app` | App Android | `StarshipsApplication` (Koin), `MainActivity`, `navigation/StarshipsNavHost` |
+| `:presentation` | Biblioteca Android con Compose | Pantallas, ViewModels, estados, `designsystem/` y `di/presentationModule` |
+| `:domain` | Kotlin/JVM puro | Modelos, contrato `StarshipRepository` y casos de uso |
+| `:data` | Biblioteca Android | Retrofit, DTO, mapeo, caché y repositorio (todos `internal`), y `di/dataModule` |
 
-Rules Gradle does not enforce, checked by `app/src/test/.../ArchitectureRulesTest`:
+`app/src/test/.../ArchitectureRulesTest` comprueba los límites que Gradle no puede aplicar por sí solo.
 
-- Only the `:app` composition root (`StarshipsApplication`) imports anything from `:data`, and only `dataModule`.
-- ViewModels reach data only through use cases received in the constructor; they never use
-  `StarshipRepository` nor resolve Koin objects (`get()`, `inject()`, `KoinComponent`).
-- `:app` does not import `:domain` models or use cases: `:presentation` exposes composables
-  that take callbacks and simple identifiers (`Int`).
-- Module dependencies are declared with `implementation`.
+- En `:app`, solo `StarshipsApplication` accede a `:data` y su única importación es `dataModule`.
+- Los ViewModels llegan a los datos mediante casos de uso recibidos por constructor. No usan `StarshipRepository` ni resuelven objetos de Koin con `get()`, `inject()` o `KoinComponent`.
+- `:app` se comunica con `:presentation` mediante composables con callbacks e identificadores de tipo `Int`. Evita importar modelos o casos de uso de `:domain` desde `:app`.
+- Declara las dependencias entre módulos con `implementation`.
 
-## Flow
+## Flujo
 
-- **Search (done, PR 2):** text field → `SearchViewModel` (query Flow + `collectLatest`, 300 ms wait
-  inside the cancellable block) → `SearchStarships` → `StarshipRepository` (3-minute in-memory
-  cache per normalised query) → `GET /api/starships/?search=…` → list.
-  Only the first page of results is used.
-- **Detail (done, PR 3):** row → `navController` with the `id` → `DetailViewModel` → `GetStarship`
-  → `GET /api/starships/{id}/`. The `id` comes from the resource URL.
+- **Búsqueda.** Campo de texto → `SearchViewModel` (flujo de consultas con `collectLatest` y espera de 300 ms dentro del bloque cancelable) → `SearchStarships` → `StarshipRepository` (caché en memoria de tres minutos por consulta normalizada y página) → `GET /api/starships/?search=…&page=…` cuando hace falta red → lista. **Cargar más** añade otra página. Editar la consulta cancela la carga anterior.
+- **Detalle.** Fila seleccionada → `navController` con el ID → `DetailViewModel` → `GetStarship` → `GET /api/starships/{id}/`. El ID procede de la URL del recurso.
 
-## Common conventions
+## Convenciones
 
-- Everything in the codebase is in English: code, comments, guides, commits and PRs.
-  User-facing text lives in string resources (see `presentation/AGENTS.md`).
-- Official Kotlin style (`kotlin.code.style=official`), packages under `es.technical_task_iberia_android`.
-- `README.md` is the entry point for reviewers; keep its commands and decisions in sync with these guides.
-- Versions only in `gradle/libs.versions.toml`. The project versions are kept (AGP 9.4.1,
-  Kotlin 2.2.10, Compose BOM 2026.02.01, Gradle 9.6); Lint warnings about newer versions are expected.
-- Every text shown on screen or announced by TalkBack lives in resources (`strings.xml`, `plurals`).
-- Colours, `dp` and `sp` only in `presentation/designsystem`. Every meaningful number has a single
-  named constant with its unit (e.g. `SearchDebounce`, `SearchCacheTtl`).
-- No test code or test data in production: fixtures live in tests and previews.
+- Mantén el código, los comentarios, los commits y las PRs en inglés. El README, la nota técnica y las guías del repositorio están en español. Los textos de la interfaz viven en recursos (consulta [la guía de Presentation](presentation/AGENTS.md)).
+- Usa el estilo oficial de Kotlin (`kotlin.code.style=official`) y paquetes bajo `es.technical_task_iberia_android`.
+- El [README](README.md) es el punto de entrada para la revisión. Mantén sus comandos y las [decisiones técnicas](docs/technical-decisions.md) al día junto con estas guías.
+- Centraliza las versiones de las dependencias en `gradle/libs.versions.toml`. Se conservan las versiones del proyecto (AGP 9.3.0, Kotlin 2.2.10, Compose BOM 2026.02.01 y Gradle 9.6). Son esperables los avisos de Lint sobre versiones más nuevas.
+- Los textos que se muestran en pantalla o anuncia TalkBack viven en recursos (`strings.xml`, `plurals`).
+- Define los colores y las medidas en `dp` y `sp` en `presentation/designsystem`. Usa una sola constante con nombre y unidad por cada valor significativo, como `SearchDebounce` o `SearchCacheTtl`.
+- Guarda el código y los datos de prueba en tests y vistas previas, fuera del código de producción.
 
-## Branches and PRs
+## Ramas y PRs
 
-- Base branch: `main`. One branch per PR (`feature/<topic>`); if the previous one is still under
-  review, the next one branches from it and its PR targets it.
-- No direct pushes to `main`, no force-push. Commit messages in English, imperative mood.
-- Every PR states its goal, how to test it, the checks that were run and any limitation, and
-  updates these guides when they change.
+- La rama base es `main`. Usa una rama por PR (`feature/<topic>`). Si la anterior sigue en revisión, crea la siguiente a partir de ella y abre la PR contra esa rama.
+- Evita los pushes directos a `main` y los force-push. Escribe los mensajes de commit en inglés y en imperativo.
+- En cada PR indica el objetivo, cómo probar el cambio, qué comprobaciones ejecutaste y cualquier limitación. Actualiza estas guías cuando corresponda.
 
-## Validation
+## Validación
 
-Requirements: JDK 17+ for Gradle (Android Studio bundles one), Android SDK 37.
+Usa el Gradle Wrapper, JDK 25 para el daemon de Gradle y Android SDK 37.
 
 ```bash
-./gradlew assembleDebug               # builds every module
-./gradlew test                        # unit tests (JVM): domain, data, ViewModels, Koin graph, architecture rules
+./gradlew assembleDebug               # Compila todos los módulos
+./gradlew test                        # Pruebas unitarias de dominio, datos, ViewModels, Koin y arquitectura
 ./gradlew lint                        # Android Lint
-./gradlew connectedDebugAndroidTest   # Compose tests in :presentation and :app (emulator or device)
-./gradlew installDebug                # installs the app
+./gradlew connectedDebugAndroidTest   # Pruebas de Compose en :presentation y :app (dispositivo o emulador)
+./gradlew installDebug                # Instala la app
 ```

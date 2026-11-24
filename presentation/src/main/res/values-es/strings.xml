@@ -1,14 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="search_title">Naves estelares</string>
+    <string name="search_title">Hangar de\nStar Wars</string>
     <string name="search_field_label">Buscar naves</string>
-    <string name="search_field_supporting">Nombre o modelo</string>
     <string name="search_clear_action">Borrar búsqueda</string>
-    <string name="search_initial_message">Escribe el nombre o el modelo de una nave para empezar a buscar.</string>
-    <string name="search_loading">Buscando…</string>
+    <string name="search_prompt">Escribe el nombre o el modelo de una nave para ver los resultados.</string>
+    <string name="search_loading">Buscando «%1$s»…</string>
+    <string name="search_cancelled">Se canceló la búsqueda de «%1$s».</string>
     <string name="search_empty_message">Ninguna nave coincide con «%1$s».</string>
+    <string name="search_empty_hint">Prueba con otro nombre o modelo.</string>
     <string name="search_error_connectivity">No se pudo contactar con el servicio de naves. Comprueba tu conexión y edita la búsqueda para reintentar.</string>
     <string name="search_error_unexpected">Algo salió mal al buscar. Edita la búsqueda para reintentar.</string>
+    <string name="search_load_more">Cargar más</string>
+    <string name="search_loading_more">Cargando más…</string>
+    <string name="search_retry_page">Reintentar</string>
+    <string name="search_next_page_error">No se han podido cargar más naves.</string>
+    <plurals name="search_results_loaded">
+        <item quantity="one">%1$d nave mostrada</item>
+        <item quantity="many">%1$d de naves mostradas</item>
+        <item quantity="other">%1$d naves mostradas</item>
+    </plurals>
     <plurals name="search_results_count">
         <item quantity="one">%1$d nave encontrada</item>
         <item quantity="many">%1$d de naves encontradas</item>
