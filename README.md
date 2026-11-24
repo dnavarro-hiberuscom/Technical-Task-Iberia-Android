@@ -1,89 +1,93 @@
 # Starships
 
-Small Android app (Kotlin, Jetpack Compose, Material 3) that searches starships on
-[SWAPI](https://swapi.dev/documentation) and shows their detail. It is a technical assessment, so
-it favours clarity, layer separation, correct cancellation and a testable cache over features.
+Starships es una app Android para buscar naves de Star Wars y consultar sus fichas. Está hecha con Kotlin, Jetpack Compose y Material 3. Para la prueba técnica me centré en que la búsqueda respondiera bien mientras escribes, en separar las responsabilidades del código y en poder comprobar la cancelación y la caché con pruebas.
 
 ## API
 
-| Use | Request |
+| Acción | Petición |
 |---|---|
-| Search | `GET https://swapi.dev/api/starships/?search=wing` |
-| Detail | `GET https://swapi.dev/api/starships/{id}/` |
+| Buscar por nombre o modelo | `GET https://swapi.dev/api/starships/?search=wing` |
+| Cargar otra página | `GET https://swapi.dev/api/starships/?search=e&page=2` |
+| Consultar la ficha por ID | `GET https://swapi.dev/api/starships/{id}/` |
 
-- Fields used: `name`, `model`, `manufacturer`, `length`, `crew` and `url`.
-- The id is the last segment of the resource `url` (`…/starships/12/` → `12`).
-- Only the **first page** of matches is used (10 results at most). The exercise is about search and
-  detail, so pagination is intentionally left out.
-- SWAPI publishes unknown values as `unknown` or `n/a`, and some figures with separators or ranges
-  (`1,600`, `30-165`). They are modelled as `Quantity.Known(value)` / `Quantity.Unknown`, and the
-  UI shows unknown values as text instead of as numbers.
+- Uso los campos `name`, `model`, `manufacturer`, `length`, `crew` y `url`. El ID se obtiene del último segmento de `url` (`…/starships/12/` → `12`).
+- La lista muestra primero hasta diez coincidencias. Si SWAPI tiene más resultados, puedes pulsar **Cargar más** al final. La app conserva las filas visibles mientras añade la siguiente página y permite reintentar si la carga falla.
+- SWAPI publica valores desconocidos como `unknown` o `n/a` y algunas cifras con separadores o rangos (`1,600`, `30-165`). El modelo usa `Quantity.Known(value)` y `Quantity.Unknown`. La interfaz muestra los valores desconocidos como texto.
 
-## Requirements and commands
+### Imágenes de las naves
 
-- Android Studio with JDK 17+ and Android SDK 37; `minSdk` is 29. Use the Gradle wrapper.
-- Internet access to run the app; unit tests do not need it.
+SWAPI devuelve los datos de las naves y sus respuestas carecen de URLs de imagen. En Reddit encontré **Star Wars Gallery**, el CDN comunitario de Sergio Coitiño. Sus archivos usan los mismos IDs que SWAPI, así que puedo cargar la imagen correspondiente tanto en la lista como en el detalle. Por ejemplo, al X-wing le corresponde `12.jpg` en `https://starwarsgallery.netlify.app/assets/starships/{id}.jpg`. [Documentación del autor](https://dev.to/sergiocoitino/free-images-for-swapi-the-star-wars-api-no-api-key-cors-enabled-3873) · [Publicación original en Reddit](https://www.reddit.com/r/learnjavascript/comments/1xirlvc/i_built_a_free_image_api_for_swapi_the_star_wars/)
+
+Coil carga y guarda las imágenes en su propia caché. Mientras se descarga una imagen o si falla la petición al CDN, se muestra un icono local de radar y los datos siguen disponibles.
+
+## Requisitos y comandos
+
+- Android Studio compatible con Android Gradle Plugin 9.3 y Android SDK 37. La app se puede instalar desde Android 10 (API 29).
+- El proyecto usa el Gradle Wrapper y solicita JDK 25 para el daemon de Gradle. [Configuración del daemon](gradle/gradle-daemon-jvm.properties)
+- La app necesita acceso a internet. Las pruebas unitarias se ejecutan con datos controlados.
 
 ```bash
-./gradlew installDebug                # build and install on a device or emulator
-./gradlew test                        # unit tests: domain, data (cache, mapping), ViewModels, Koin graph, architecture rules
-./gradlew connectedDebugAndroidTest   # Compose tests (needs an emulator or device)
-./gradlew lint                        # Android Lint
+./gradlew installDebug                # Compila e instala la app en un dispositivo o emulador
+./gradlew test                        # Ejecuta las pruebas unitarias
+./gradlew connectedDebugAndroidTest   # Ejecuta las pruebas de Compose en un dispositivo o emulador
+./gradlew lint                        # Ejecuta Android Lint
 ```
 
-## Decisions
+## Arquitectura y decisiones
 
-**Modules** (arrows are compile-time dependencies, all `implementation`):
+En la [nota de decisiones técnicas](docs/technical-decisions.md) explico por qué elegí Compose, Koin, Retrofit, Navigation Compose y Coil, cómo pasa la búsqueda por cada módulo y qué cubren las pruebas de accesibilidad y de la app.
 
+Las flechas representan dependencias de compilación declaradas con `implementation`.
+
+```text
+:app          → :presentation, :data
+:presentation → :domain
+:data         → :domain
+:domain       → ningún otro módulo del proyecto
 ```
-:app → :presentation, :data      :presentation → :domain      :data → :domain      :domain → –
+
+- **`:domain`** es Kotlin puro. Contiene `Starship`, el contrato `StarshipRepository`, los casos de uso `SearchStarships` y `GetStarship`, y las reglas de `SearchQuery`. Las consultas vacías se resuelven dentro del caso de uso.
+- **`:data`** implementa el repositorio. Retrofit, los DTO, el mapeo y la caché son `internal`. Su entrada pública es `dataModule`.
+- **`:presentation`** contiene las pantallas, los ViewModels, los estados de UI y el tema Material 3.
+- **`:app`** inicia Koin, aloja la actividad y monta el grafo de navegación. Se comunica con las pantallas mediante callbacks e IDs de tipo `Int`.
+
+`ArchitectureRulesTest` comprueba que `StarshipsApplication` sea el único punto de acceso a `:data` a través de `dataModule` y que los ViewModels lleguen a los datos mediante casos de uso inyectados por constructor.
+
+**Inyección de dependencias.** `dataModule` registra el cliente de red y el repositorio como `single`. `presentationModule` registra los casos de uso como `factory` y los ViewModels con `viewModelOf`. El dominio queda libre de Koin. `KoinGraphTest` valida el grafo con `verify()`.
+
+**Caché de búsqueda.** Se guarda en memoria durante tres minutos por página y consulta normalizada. La clave usa el número de página y el texto recortado en minúsculas. El tiempo cuenta desde que llega una respuesta correcta. A los tres minutos, la siguiente búsqueda vuelve a pedir los datos. Se guardan las listas vacías si la API respondió correctamente. Los fallos y las cancelaciones se descartan. Las pruebas pueden adelantar el reloj gracias a un `TimeSource` monotónico inyectado.
+
+**Cancelación.** El ViewModel recoge las ediciones con `collectLatest`. La espera de 300 ms va dentro del bloque cancelable, de modo que una edición cancela la petición anterior en cuanto llega. Retrofit transmite la cancelación a la llamada HTTP, el repositorio deja que `CancellationException` se propague y `ensureActive()` evita que una respuesta cancelada modifique el estado. Al editar desaparecen los resultados anteriores y al limpiar el campo se recupera el estado inicial. `SearchViewModelTest` detectaría una regresión si el `debounce` se pusiera antes de `collectLatest`.
+
+**Interfaz y accesibilidad.** Los textos usan recursos en inglés y español. Los colores, la tipografía, las formas y las medidas se centralizan en `presentation/designsystem`. El buscador tiene una etiqueta persistente, las acciones tienen nombres traducidos y áreas táctiles de al menos 48 dp, y cada resultado es un único elemento enfocable.
+
+## Pruebas
+
+Estas dos órdenes ejecutan las pruebas que cubren la caducidad de la caché y la cancelación de búsquedas.
+
+```bash
+./gradlew :data:testDebugUnitTest --tests '*StarshipRepositoryCacheTest'
+./gradlew :presentation:testDebugUnitTest --tests '*SearchViewModelTest'
 ```
 
-- `:domain` is pure Kotlin: `Starship`, `StarshipRepository`, `SearchStarships`, `GetStarship` and the
-  query rules (`SearchQuery` trims the text; blank queries never reach the repository).
-- `:data` keeps Retrofit, DTOs, mapping and cache `internal` and exposes only `dataModule`.
-- `:presentation` has the screens, ViewModels, UI state and the single Material 3 theme.
-- `:app` only starts Koin, hosts the Activity and wires the navigation graph. It exposes no domain
-  types to the screens: they receive callbacks and a plain `Int` id.
-- Gradle enforces the module arrows. Two rules it cannot enforce are checked by
-  `ArchitectureRulesTest`: only `StarshipsApplication` imports `dataModule` from `:data`, and
-  ViewModels reach data through use cases (no repository, no Koin lookups).
-
-**Koin.** `dataModule` registers the network client and the repository (which owns the cache) as
-`single`. `presentationModule` registers use cases as `factory` and ViewModels with `viewModelOf`,
-so `:domain` stays free of Koin. `KoinGraphTest` verifies the whole graph with `verify()`.
-
-**Cache.** In memory, per query, keyed by the lowercased and trimmed text. An entry lives
-`SearchCacheTtl` (3 minutes) from the moment a successful response arrives: it is valid while its
-age is lower than 3 minutes and refreshed at exactly 3 minutes. Empty results are cached; errors and
-cancellations are not. Time comes from an injected monotonic `TimeSource`, so tests advance it
-without waiting.
-
-**Cancellation.** Typed texts form a Flow collected with `collectLatest`; the 300 ms wait
-(`SearchDebounce`) is inside the cancellable block, so a new text cancels the in-flight request
-immediately (not after the debounce). Retrofit `suspend` calls cancel the HTTP request, the repository
-never swallows `CancellationException`, and `ensureActive()` stops an old answer from writing state.
-Old results are removed as soon as the text changes, and clearing the field resets the screen.
-`SearchViewModelTest` fails if `debounce` is placed before `collectLatest`.
-
-**UI and accessibility.** All text lives in string resources (English default, Spanish
-translation). Colours, type, shapes, spacing and sizes are defined once in `presentation/designsystem`.
-The search field has a persistent label, actions have localised names and at least a 48 dp touch
-target, and each result row is a single focusable element.
-
-## Tests
-
-| Kind | Where | What |
+| Tipo | Módulo | Qué comprueba |
 |---|---|---|
-| Unit, mocked repository | `domain` | blank query without calls, trimming, results, failures |
-| Unit, fake service + controllable clock | `data` | one call for equivalent queries, per-query entries, just before and exactly at 3 min, reuse of the refreshed value, retry after failure, mapping |
-| Unit, virtual time | `presentation` | cancellation before the next debounce, no stale results or errors, clear, typed errors, detail loading/retry |
-| Unit | `app` | Koin graph `verify()`, architecture rules |
-| Compose (device) | `presentation`, `app` | search field semantics and clearing, row selection, detail fields and unknown values, full flow search → detail → back keeping the query |
+| Unitarias con repositorio simulado | `domain` | Consultas vacías sin acceder al repositorio, recorte de espacios, resultados y propagación de fallos. |
+| Unitarias con servicio simulado y reloj controlado | `data` | Reutilización para consultas equivalentes, entradas independientes, vigencia justo antes de tres minutos, caducidad al llegar a tres minutos, reutilización del valor actualizado, reintentos y mapeo. |
+| Unitarias con tiempo virtual | `presentation` | Cancelación antes de que termine la espera de la nueva búsqueda, descarte de resultados y errores antiguos, limpieza del campo, errores tipados, carga y reintento del detalle. |
+| Unitarias | `app` | Grafo de Koin con `verify()` y reglas de arquitectura. |
+| Compose en dispositivo o emulador | `presentation`, `app` | Semántica y limpieza del buscador, selección de resultados, campos del detalle y valores desconocidos, paginación hasta la última página y vuelta a la misma búsqueda desde la ficha. |
 
-The Compose tests use controlled data, not the network; test data is never used in production code.
+Las pruebas de Compose usan datos controlados y un recurso local para las imágenes. Los datos de prueba se mantienen en los tests y las vistas previas.
 
-## Visual phase
+Con la paginación, pasaron la compilación de depuración, las **50 pruebas unitarias**, Android Lint y las **6 pruebas de Compose de la pantalla de búsqueda** en Android 11 (API 30). La última ejecución de la suite de Compose completa, antes de añadir la paginación, pasó en Android 11 y Android 16 (API 36).
 
-Illustrations, animations and custom visual design are out of scope for this delivery. The screens use
-standard Material 3 components on top of the shared theme.
+También comprobé con SWAPI real que, al buscar `e`, **Cargar más** amplía la lista de 10 a 20 naves. Las comprobaciones manuales incluyeron la apertura del X-wing, la vuelta a la consulta, la limpieza del campo y una búsqueda sin coincidencias. Revisé el diseño en una tablet simulada y en una pantalla compacta con modo oscuro y el tamaño de letra al 160 %. Queda pendiente una comprobación manual con TalkBack.
+
+## Diseño visual
+
+Para el diseño de la app combiné un hangar ilustrado en azul petróleo con un buscador marfil y una lista de color papel. Mientras se carga una búsqueda, la pantalla indica qué consulta está en curso. Si escribes otra, debajo del buscador aparece un aviso con la consulta que se canceló.
+
+--
+
+
