@@ -18,6 +18,18 @@ data class Spacing(
 /** Component sizes shared by the screens. */
 @Immutable
 data class Sizes(
+    val maxDetailImageHeight: Dp = 504.dp,
+    val detailContentMaxWidth: Dp = 600.dp,
+    val inlineDetailMinWidth: Dp = 256.dp,
+    val searchContentMaxWidth: Dp = 640.dp,
+    val inlineSearchMinWidth: Dp = 260.dp,
+    val detailTitleFadeHeight: Dp = 72.dp,
+    val detailTitleAccentWidth: Dp = 52.dp,
+    val hangarArt: Dp = 288.dp,
+    val starshipThumbnailWidth: Dp = 116.dp,
+    val starshipThumbnailHeight: Dp = 88.dp,
+    val outlineStroke: Dp = 1.dp,
+    val insignia: Dp = 56.dp,
     /** Minimum touch target for any action (Material and Android accessibility guidance). */
     val minTouchTarget: Dp = 48.dp,
     /** Standard icon size. */
