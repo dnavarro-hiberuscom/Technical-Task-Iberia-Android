@@ -1,0 +1,23 @@
+AGENTS.md
+  s_033c76ec803950::t_51c8f2ed2ca1f9 1,3,5,7,9-10,13,16,18-53,56-57,59-60
+README.md
+  s_033c76ec803950::t_2f6edcc101fa1c 3,7,9-11,13-15,17,19-27,30-33,36,38,40-46,48-70,73,75-89,91
+docs/technical-decisions.md
+  s_033c76ec803950::t_63dd4511cfa8e9 1-66
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "f00329f5406654cc428fa2147568b9c750a19b3a",
+  "prompts": {},
+  "sessions": {
+    "s_033c76ec803950": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "350a6398-d221-49ee-87c7-666b24810102",
+        "model": "unknown"
+      },
+      "human_author": "David Navarro <dnavarro@hiberus.com>"
+    }
+  }
+}
