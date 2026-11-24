@@ -1,0 +1,37 @@
+data/src/main/kotlin/es/technical_task_iberia_android/data/cache/SearchCache.kt
+  s_033c76ec803950::t_3d0e3351ba1428 4,15,24-25,27,30-31,37,40-42
+data/src/main/kotlin/es/technical_task_iberia_android/data/network/StarshipDto.kt
+  s_033c76ec803950::t_d97439380436c2 17,21
+data/src/main/kotlin/es/technical_task_iberia_android/data/network/StarshipService.kt
+  s_033c76ec803950::t_93dcd21155b93f 13,15-18
+data/src/main/kotlin/es/technical_task_iberia_android/data/repository/StarshipRepositoryImpl.kt
+  s_033c76ec803950::t_f3fcf8b3459bf8 9,26-37
+data/src/test/kotlin/es/technical_task_iberia_android/data/repository/FakeStarshipService.kt
+  s_033c76ec803950::t_a46648c28cf072 11-13,17,19,21-24
+data/src/test/kotlin/es/technical_task_iberia_android/data/repository/StarshipRepositoryCacheTest.kt
+  s_033c76ec803950::t_1dadedc603329e 4,46-63,93,116,134
+domain/src/main/kotlin/es/technical_task_iberia_android/domain/model/StarshipPage.kt
+  s_033c76ec803950::t_7abf2d42b5e3d1 1-8
+domain/src/main/kotlin/es/technical_task_iberia_android/domain/repository/StarshipRepository.kt
+  s_033c76ec803950::t_95adb80ba77150 3,6,16-17
+domain/src/main/kotlin/es/technical_task_iberia_android/domain/usecase/SearchStarships.kt
+  s_033c76ec803950::t_b657a5a5b8804a 3,5,15-18
+domain/src/test/kotlin/es/technical_task_iberia_android/domain/usecase/SearchStarshipsTest.kt
+  s_033c76ec803950::t_9a02339ae12e7f 7,35,38,43,47,52,54,59,61,66
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "1f1317a0177797a0ec847a3c5cb6a2501abb5b38",
+  "prompts": {},
+  "sessions": {
+    "s_033c76ec803950": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "350a6398-d221-49ee-87c7-666b24810102",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "David Navarro <dnavarro@hiberus.com>"
+    }
+  }
+}
