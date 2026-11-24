@@ -1,0 +1,31 @@
+AGENTS.md
+  s_033c76ec803950::t_246d79d31feeba 1,3,5,7,9-10,13,16,18-53,56-57,59-60
+README.md
+  s_033c76ec803950::t_8530c0c1fd8b28 3,7,9-11,13-15,17,19-27,30-33,36,38,40-46,48-70,73,75-89,91
+app/AGENTS.md
+  s_033c76ec803950::t_640eac15a6df9e 1,3,5,7-10,12,14-17,19,21-23
+data/AGENTS.md
+  s_033c76ec803950::t_f9428955a818ca 1,3,5,7,9,11-15,17,19
+docs/technical-decisions.md
+  s_033c76ec803950::t_6c7cd4c38700b5 1-66
+domain/AGENTS.md
+  s_033c76ec803950::t_5f1183cb8059a9 1,3,5,7,9-15,17,19-20
+presentation/AGENTS.md
+  s_033c76ec803950::t_ba4b3ea3ee5c26 1,3,5,7-9,11,13-16,18,20-21,23,25-27,29,31,33,35,37,39-40
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "259e0c7f7930da208183dfe714854f6fe9469df0",
+  "prompts": {},
+  "sessions": {
+    "s_033c76ec803950": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "350a6398-d221-49ee-87c7-666b24810102",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "David Navarro <dnavarro@hiberus.com>"
+    }
+  }
+}
