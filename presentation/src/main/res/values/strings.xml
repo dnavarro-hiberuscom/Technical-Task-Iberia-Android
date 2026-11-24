@@ -14,4 +14,17 @@
         <item quantity="other">%1$d starships found</item>
     </plurals>
     <string name="search_result_summary">%1$s, %2$s</string>
+    <string name="detail_title">Starship details</string>
+    <string name="detail_back_action">Back</string>
+    <string name="detail_label_model">Model</string>
+    <string name="detail_label_manufacturer">Manufacturer</string>
+    <string name="detail_label_length">Length</string>
+    <string name="detail_label_crew">Crew</string>
+    <string name="detail_length_value">%1$s m</string>
+    <string name="detail_value_unknown">Unknown</string>
+    <string name="detail_loading">Loading…</string>
+    <string name="detail_retry_action">Try again</string>
+    <string name="detail_error_connectivity">Could not reach the starships service. Check your connection and try again.</string>
+    <string name="detail_error_not_found">This starship does not exist.</string>
+    <string name="detail_error_unexpected">Something went wrong while loading the starship.</string>
 </resources>

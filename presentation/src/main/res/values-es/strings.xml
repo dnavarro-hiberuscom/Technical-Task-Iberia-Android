@@ -15,4 +15,17 @@
         <item quantity="other">%1$d naves encontradas</item>
     </plurals>
     <string name="search_result_summary">%1$s, %2$s</string>
+    <string name="detail_title">Detalle de la nave</string>
+    <string name="detail_back_action">Volver</string>
+    <string name="detail_label_model">Modelo</string>
+    <string name="detail_label_manufacturer">Fabricante</string>
+    <string name="detail_label_length">Longitud</string>
+    <string name="detail_label_crew">Tripulación</string>
+    <string name="detail_length_value">%1$s m</string>
+    <string name="detail_value_unknown">Desconocido</string>
+    <string name="detail_loading">Cargando…</string>
+    <string name="detail_retry_action">Reintentar</string>
+    <string name="detail_error_connectivity">No se pudo contactar con el servicio de naves. Comprueba tu conexión e inténtalo de nuevo.</string>
+    <string name="detail_error_not_found">Esta nave no existe.</string>
+    <string name="detail_error_unexpected">Algo salió mal al cargar la nave.</string>
 </resources>

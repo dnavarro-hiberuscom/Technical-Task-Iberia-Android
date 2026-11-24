@@ -38,6 +38,12 @@ android {
 }
 
 dependencies {
+    constraints {
+        implementation(libs.androidx.concurrent.futures) {
+            because("profileinstaller pulls 1.1.0 and androidx.test.ext:junit needs 1.2.0; AGP aligns both classpaths")
+        }
+    }
+
     implementation(project(":presentation"))
     implementation(project(":data"))
 
@@ -48,4 +54,15 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.core.ktx)
     implementation(libs.kotlinx.serialization.json)
+
+    testImplementation(libs.junit)
+    testImplementation(platform(libs.koin.bom))
+    testImplementation(libs.koin.test)
+
+    // Test-only: the instrumented flow test swaps the repository for a fake with controlled data.
+    androidTestImplementation(project(":domain"))
+    androidTestImplementation(platform(libs.androidx.compose.bom))
+    androidTestImplementation(libs.androidx.compose.ui.test.junit4)
+    androidTestImplementation(libs.androidx.junit)
+    debugImplementation(libs.androidx.compose.ui.test.manifest)
 }

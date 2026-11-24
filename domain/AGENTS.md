@@ -18,12 +18,9 @@ If a change needs one of those libraries, it does not belong here.
 
 - `usecase/SearchStarships`: `invoke(rawQuery)` builds a `SearchQuery`; blank → empty list without
   calling the repository; otherwise `repository.searchStarships(query)`.
+- `usecase/GetStarship`: `invoke(id)` returns `repository.getStarship(id)`.
 - Tests (`src/test`, MockK): blank query without calls, trimming, returned results, empty results,
   failures reaching the caller.
-
-## Planned
-
-- PR 3: `GetStarship`.
 
 ## Rules
 
