@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="search_title">Starships</string>
+    <string name="search_initial_message">Type the name or model of a starship to start searching.</string>
+</resources>

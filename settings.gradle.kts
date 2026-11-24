@@ -23,5 +23,5 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "Technical-Task-Iberia-Android"
-include(":app")
+include(":app", ":presentation", ":domain", ":data")
  
