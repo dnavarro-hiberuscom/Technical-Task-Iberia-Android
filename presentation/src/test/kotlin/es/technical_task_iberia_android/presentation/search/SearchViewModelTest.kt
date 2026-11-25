@@ -1,7 +1,7 @@
 package es.technical_task_iberia_android.presentation.search
 
 import es.technical_task_iberia_android.domain.model.StarshipException
-import es.technical_task_iberia_android.domain.usecase.SearchStarships
+import es.technical_task_iberia_android.domain.usecase.SearchStarshipsUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.toList
@@ -32,7 +32,7 @@ class SearchViewModelTest {
     @Before
     fun setUp() {
         Dispatchers.setMain(dispatcher)
-        viewModel = SearchViewModel(SearchStarships(repository))
+        viewModel = SearchViewModel(SearchStarshipsUseCase(repository))
     }
 
     @After
@@ -231,7 +231,7 @@ class SearchViewModelTest {
         assertEquals(listOf("wing"), repository.cancelled)
         assertEquals(SearchUiState(), state)
 
-        // Nothing comes back afterwards, not even after the debounce.
+        // Nothing comes back variant, not even after debounce.
         advanceTimeBy(SearchDebounce * 2)
         runCurrent()
         assertEquals(SearchUiState(), state)

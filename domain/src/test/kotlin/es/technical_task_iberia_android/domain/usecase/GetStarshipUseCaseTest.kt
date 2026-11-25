@@ -12,10 +12,10 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.fail
 import org.junit.Test
 
-class GetStarshipTest {
+class GetStarshipUseCaseTest {
 
     private val repository = mockk<StarshipRepository>()
-    private val getStarship = GetStarship(repository)
+    private val getStarshipUseCase = GetStarshipUseCase(repository)
 
     private val xWing = Starship(
         id = 12,
@@ -30,7 +30,7 @@ class GetStarshipTest {
     fun `returns the starship of the repository`() = runTest {
         coEvery { repository.getStarship(12) } returns xWing
 
-        assertEquals(xWing, getStarship(12))
+        assertEquals(xWing, getStarshipUseCase(12))
         coVerify(exactly = 1) { repository.getStarship(12) }
     }
 
@@ -39,9 +39,9 @@ class GetStarshipTest {
         coEvery { repository.getStarship(999) } throws StarshipException.NotFound()
 
         try {
-            getStarship(999)
+            getStarshipUseCase(999)
             fail("Expected StarshipException.NotFound")
-        } catch (expected: StarshipException.NotFound) {
+        } catch (_: StarshipException.NotFound) {
             // expected
         }
     }

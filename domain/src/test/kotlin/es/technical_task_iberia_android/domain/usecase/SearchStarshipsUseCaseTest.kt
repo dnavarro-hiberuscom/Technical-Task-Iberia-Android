@@ -15,10 +15,10 @@ import org.junit.Assert.assertTrue
 import org.junit.Assert.fail
 import org.junit.Test
 
-class SearchStarshipsTest {
+class SearchStarshipsUseCaseTest {
 
     private val repository = mockk<StarshipRepository>()
-    private val searchStarships = SearchStarships(repository)
+    private val searchStarshipsUsecase = SearchStarshipsUseCase(repository)
 
     private val xWing = Starship(
         id = 12,
@@ -32,7 +32,7 @@ class SearchStarshipsTest {
     @Test
     fun `blank query returns an empty list without calling the repository`() = runTest {
         listOf("", " ", "   \t\n").forEach { blank ->
-            assertTrue(searchStarships(blank).starships.isEmpty())
+            assertTrue(searchStarshipsUsecase(blank).starships.isEmpty())
         }
 
         coVerify(exactly = 0) { repository.searchStarships(any(), any()) }
@@ -42,7 +42,7 @@ class SearchStarshipsTest {
     fun `query is trimmed before reaching the repository`() = runTest {
         coEvery { repository.searchStarships(any(), any()) } returns StarshipPage(listOf(xWing))
 
-        searchStarships("  wing \n")
+        searchStarshipsUsecase("  wing \n")
 
         coVerify(exactly = 1) { repository.searchStarships(SearchQuery.from("wing")!!, 1) }
     }
@@ -51,14 +51,14 @@ class SearchStarshipsTest {
     fun `returns what the repository returns`() = runTest {
         coEvery { repository.searchStarships(any(), any()) } returns StarshipPage(listOf(xWing))
 
-        assertEquals(listOf(xWing), searchStarships("wing").starships)
+        assertEquals(listOf(xWing), searchStarshipsUsecase("wing").starships)
     }
 
     @Test
     fun `returns an empty list when nothing matches`() = runTest {
         coEvery { repository.searchStarships(any(), any()) } returns StarshipPage(emptyList())
 
-        assertTrue(searchStarships("zzzz").starships.isEmpty())
+        assertTrue(searchStarshipsUsecase("zzzz").starships.isEmpty())
     }
 
     @Test
@@ -66,9 +66,9 @@ class SearchStarshipsTest {
         coEvery { repository.searchStarships(any(), any()) } throws StarshipException.Connectivity()
 
         try {
-            searchStarships("wing")
+            searchStarshipsUsecase("wing")
             fail("Expected a StarshipException")
-        } catch (expected: StarshipException.Connectivity) {
+        } catch (_: StarshipException.Connectivity) {
             // expected
         }
     }

@@ -13,12 +13,12 @@ Antes de modificar un módulo, lee esta guía y la del módulo (`<módulo>/AGENT
 :domain       → ningún otro módulo del proyecto
 ```
 
-| Módulo | Tipo | Contenido |
-|---|---|---|
-| `:app` | App Android | `StarshipsApplication` (Koin), `MainActivity`, `navigation/StarshipsNavHost` |
-| `:presentation` | Biblioteca Android con Compose | Pantallas, ViewModels, estados, `designsystem/` y `di/presentationModule` |
-| `:domain` | Kotlin/JVM puro | Modelos, contrato `StarshipRepository` y casos de uso |
-| `:data` | Biblioteca Android | Retrofit, DTO, mapeo, caché y repositorio (todos `internal`), y `di/dataModule` |
+| Módulo          | Tipo                           | Contenido                                                                       |
+|-----------------|--------------------------------|---------------------------------------------------------------------------------|
+| `:app`          | App Android                    | `StarshipsApplication` (Koin), `MainActivity`, `navigation/StarshipsNavHost`    |
+| `:presentation` | Biblioteca Android con Compose | Pantallas, ViewModels, estados, `designsystem/` y `di/presentationModule`       |
+| `:domain`       | Kotlin/JVM puro                | Modelos, contrato `StarshipRepository` y casos de uso                           |
+| `:data`         | Biblioteca Android             | Retrofit, DTO, mapeo, caché y repositorio (todos `internal`), y `di/dataModule` |
 
 `app/src/test/.../ArchitectureRulesTest` comprueba los límites que Gradle no puede aplicar por sí solo.
 
@@ -29,8 +29,8 @@ Antes de modificar un módulo, lee esta guía y la del módulo (`<módulo>/AGENT
 
 ## Flujo
 
-- **Búsqueda.** Campo de texto → `SearchViewModel` (flujo de consultas con `collectLatest` y espera de 300 ms dentro del bloque cancelable) → `SearchStarships` → `StarshipRepository` (caché en memoria de tres minutos por consulta normalizada y página) → `GET /api/starships/?search=…&page=…` cuando hace falta red → lista. **Cargar más** añade otra página. Editar la consulta cancela la carga anterior.
-- **Detalle.** Fila seleccionada → `navController` con el ID → `DetailViewModel` → `GetStarship` → `GET /api/starships/{id}/`. El ID procede de la URL del recurso.
+- **Búsqueda.** Campo de texto → `SearchViewModel` (flujo de consultas con `collectLatest` y espera de 300 ms dentro del bloque cancelable) → `SearchStarshipsUseCase` → `StarshipRepository` (caché en memoria de tres minutos por consulta normalizada y página) → `GET /api/starships/?search=…&page=…` cuando hace falta red → lista. **Cargar más** añade otra página. Editar la consulta cancela la carga anterior.
+- **Detalle.** Fila seleccionada → `navController` con el ID → `DetailViewModel` → `GetStarshipUseCase` → `GET /api/starships/{id}/`. El ID procede de la URL del recurso.
 
 ## Convenciones
 

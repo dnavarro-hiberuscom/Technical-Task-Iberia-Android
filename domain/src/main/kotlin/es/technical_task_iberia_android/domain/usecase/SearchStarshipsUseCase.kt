@@ -10,7 +10,7 @@ import es.technical_task_iberia_android.domain.repository.StarshipRepository
  *
  * Owns the query rules: the text is trimmed and a blank query never reaches the repository.
  */
-class SearchStarships(private val repository: StarshipRepository) {
+class SearchStarshipsUseCase(private val repository: StarshipRepository) {
 
     /** Returns the matches for [rawQuery], or an empty page without any call when it is blank. */
     suspend operator fun invoke(rawQuery: String, page: Int = FirstSearchPage): StarshipPage {

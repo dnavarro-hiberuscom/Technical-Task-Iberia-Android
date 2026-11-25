@@ -4,11 +4,11 @@ Starships es una app Android para buscar naves de Star Wars y consultar sus fich
 
 ## API
 
-| Acción | Petición |
-|---|---|
-| Buscar por nombre o modelo | `GET https://swapi.dev/api/starships/?search=wing` |
-| Cargar otra página | `GET https://swapi.dev/api/starships/?search=e&page=2` |
-| Consultar la ficha por ID | `GET https://swapi.dev/api/starships/{id}/` |
+| Acción                     | Petición                                               |
+|----------------------------|--------------------------------------------------------|
+| Buscar por nombre o modelo | `GET https://swapi.dev/api/starships/?search=wing`     |
+| Cargar otra página         | `GET https://swapi.dev/api/starships/?search=e&page=2` |
+| Consultar la ficha por ID  | `GET https://swapi.dev/api/starships/{id}/`            |
 
 - Uso los campos `name`, `model`, `manufacturer`, `length`, `crew` y `url`. El ID se obtiene del último segmento de `url` (`…/starships/12/` → `12`).
 - La lista muestra primero hasta diez coincidencias. Si SWAPI tiene más resultados, puedes pulsar **Cargar más** al final. La app conserva las filas visibles mientras añade la siguiente página y permite reintentar si la carga falla.
@@ -46,7 +46,7 @@ Las flechas representan dependencias de compilación declaradas con `implementat
 :domain       → ningún otro módulo del proyecto
 ```
 
-- **`:domain`** es Kotlin puro. Contiene `Starship`, el contrato `StarshipRepository`, los casos de uso `SearchStarships` y `GetStarship`, y las reglas de `SearchQuery`. Las consultas vacías se resuelven dentro del caso de uso.
+- **`:domain`** es Kotlin puro. Contiene `Starship`, el contrato `StarshipRepository`, los casos de uso `SearchStarshipsUseCase` y `GetStarshipUseCase`, y las reglas de `SearchQuery`. Las consultas vacías se resuelven dentro del caso de uso.
 - **`:data`** implementa el repositorio. Retrofit, los DTO, el mapeo y la caché son `internal`. Su entrada pública es `dataModule`.
 - **`:presentation`** contiene las pantallas, los ViewModels, los estados de UI y el tema Material 3.
 - **`:app`** inicia Koin, aloja la actividad y monta el grafo de navegación. Se comunica con las pantallas mediante callbacks e IDs de tipo `Int`.
@@ -70,13 +70,13 @@ Estas dos órdenes ejecutan las pruebas que cubren la caducidad de la caché y l
 ./gradlew :presentation:testDebugUnitTest --tests '*SearchViewModelTest'
 ```
 
-| Tipo | Módulo | Qué comprueba |
-|---|---|---|
-| Unitarias con repositorio simulado | `domain` | Consultas vacías sin acceder al repositorio, recorte de espacios, resultados y propagación de fallos. |
-| Unitarias con servicio simulado y reloj controlado | `data` | Reutilización para consultas equivalentes, entradas independientes, vigencia justo antes de tres minutos, caducidad al llegar a tres minutos, reutilización del valor actualizado, reintentos y mapeo. |
-| Unitarias con tiempo virtual | `presentation` | Cancelación antes de que termine la espera de la nueva búsqueda, descarte de resultados y errores antiguos, limpieza del campo, errores tipados, carga y reintento del detalle. |
-| Unitarias | `app` | Grafo de Koin con `verify()` y reglas de arquitectura. |
-| Compose en dispositivo o emulador | `presentation`, `app` | Semántica y limpieza del buscador, selección de resultados, campos del detalle y valores desconocidos, paginación hasta la última página y vuelta a la misma búsqueda desde la ficha. |
+| Tipo                                               | Módulo                | Qué comprueba                                                                                                                                                                                          |
+|----------------------------------------------------|-----------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Unitarias con repositorio simulado                 | `domain`              | Consultas vacías sin acceder al repositorio, recorte de espacios, resultados y propagación de fallos.                                                                                                  |
+| Unitarias con servicio simulado y reloj controlado | `data`                | Reutilización para consultas equivalentes, entradas independientes, vigencia justo antes de tres minutos, caducidad al llegar a tres minutos, reutilización del valor actualizado, reintentos y mapeo. |
+| Unitarias con tiempo virtual                       | `presentation`        | Cancelación antes de que termine la espera de la nueva búsqueda, descarte de resultados y errores antiguos, limpieza del campo, errores tipados, carga y reintento del detalle.                        |
+| Unitarias                                          | `app`                 | Grafo de Koin con `verify()` y reglas de arquitectura.                                                                                                                                                 |
+| Compose en dispositivo o emulador                  | `presentation`, `app` | Semántica y limpieza del buscador, selección de resultados, campos del detalle y valores desconocidos, paginación hasta la última página y vuelta a la misma búsqueda desde la ficha.                  |
 
 Las pruebas de Compose usan datos controlados y un recurso local para las imágenes. Los datos de prueba se mantienen en los tests y las vistas previas.
 

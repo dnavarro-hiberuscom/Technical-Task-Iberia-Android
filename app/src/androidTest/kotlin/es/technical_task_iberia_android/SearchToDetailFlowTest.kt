@@ -59,7 +59,7 @@ class SearchToDetailFlowTest {
 
     private fun string(id: Int, vararg args: Any) = rule.activity.getString(id, *args)
 
-    private fun waitForText(text: String) = rule.waitUntil(timeoutMillis = TimeoutMillis) {
+    private fun waitForText(text: String) = rule.waitUntil(timeoutMillis = TIME_OUT_MILLIS) {
         rule.onAllNodes(hasText(text)).fetchSemanticsNodes().isNotEmpty()
     }
 
@@ -90,6 +90,6 @@ class SearchToDetailFlowTest {
     }
 
     private companion object {
-        const val TimeoutMillis = 5_000L
+        const val TIME_OUT_MILLIS = 5_000L
     }
 }

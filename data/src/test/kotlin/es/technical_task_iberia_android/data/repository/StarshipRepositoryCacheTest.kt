@@ -123,7 +123,7 @@ class StarshipRepositoryCacheTest {
         try {
             repository.searchStarships(query("wing"))
             fail("Expected a connectivity failure")
-        } catch (expected: StarshipException.Connectivity) {
+        } catch (_: StarshipException.Connectivity) {
             // expected
         }
 
@@ -140,7 +140,7 @@ class StarshipRepositoryCacheTest {
         try {
             repository.searchStarships(query("wing"))
             fail("Expected a CancellationException")
-        } catch (expected: CancellationException) {
+        } catch (_: CancellationException) {
             // expected: never wrapped in a StarshipException
         }
 

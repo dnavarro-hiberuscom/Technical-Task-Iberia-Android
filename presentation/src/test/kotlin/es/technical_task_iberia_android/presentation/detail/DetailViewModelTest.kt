@@ -6,7 +6,7 @@ import es.technical_task_iberia_android.domain.model.Starship
 import es.technical_task_iberia_android.domain.model.StarshipException
 import es.technical_task_iberia_android.domain.model.StarshipPage
 import es.technical_task_iberia_android.domain.repository.StarshipRepository
-import es.technical_task_iberia_android.domain.usecase.GetStarship
+import es.technical_task_iberia_android.domain.usecase.GetStarshipUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -48,7 +48,7 @@ class DetailViewModelTest {
     @After
     fun tearDown() = Dispatchers.resetMain()
 
-    private fun viewModel() = DetailViewModel(12, GetStarship(repository))
+    private fun viewModel() = DetailViewModel(12, GetStarshipUseCase(repository))
 
     @Test
     fun `starts loading and then shows the starship`() = runTest(dispatcher) {
