@@ -1,0 +1,31 @@
+presentation/build.gradle.kts
+  s_cd7bfcc6f2b0fe::t_484da57346f5f3 30
+domain/build.gradle.kts
+  s_cd7bfcc6f2b0fe::t_2aed5d45a8b39c 19
+data/build.gradle.kts
+  s_cd7bfcc6f2b0fe::t_484da57346f5f3 25
+gradle/libs.versions.toml
+  s_cd7bfcc6f2b0fe::t_484da57346f5f3 52-61,67-81
+  s_cd7bfcc6f2b0fe::t_2aed5d45a8b39c 62-66
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "56bcf385c04f2e9e7a3505596ddf20a5c839a789",
+  "prompts": {},
+  "humans": {
+    "h_3a16911fd9535c": {
+      "author": "David Navarro <dnavarro@hiberus.com>"
+    }
+  },
+  "sessions": {
+    "s_cd7bfcc6f2b0fe": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "6d98e9fd-244c-4b11-86fa-b2b9ac73ab3c",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": null
+    }
+  }
+}
