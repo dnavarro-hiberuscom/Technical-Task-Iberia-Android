@@ -1,0 +1,45 @@
+presentation/src/main/kotlin/es/technical_task_iberia_android/presentation/search/SearchDebounce.kt
+  s_fb85d167258370::t_820db24849e324 6-12
+presentation/AGENTS.md
+  s_fb85d167258370::t_34185ea4cdc326 1,3,5,7-9,11,13-16,18,20-21,23,25-27,29,31,33,35,37,39-40
+domain/AGENTS.md
+  s_fb85d167258370::t_98af443ff541c8 1,3,5,7,9-15,17,19-20
+AGENTS.md
+  s_fb85d167258370::t_2f6824fa089986 1,3,5,7,9-23,25-26,28,31-37,41,43-48,50,52,54-56,58,60-62,65-66,68-69,72,80-96
+  s_fb85d167258370::t_9d032801c0b150 39,71,73-79
+  s_fb85d167258370::t_f00b86cfc3b59c 30
+docs/technical-decisions.md
+  s_fb85d167258370::t_612213fcbc02aa 60
+  s_fb85d167258370::t_5c725751885ece 106
+  s_fb85d167258370::t_54e041f148d045 104
+  s_fb85d167258370::t_0dda5455a70cae 1,3,5,7,9,11,13,15,19,21,23,25,29,33,35,37,39-43,45-48,50-52,54-59,61-76,78,80,82-103,105,107
+  s_fb85d167258370::t_832f3ac8de6824 17,27,31,53
+  s_fb85d167258370::t_3bce76d4ceba4d 77,79,81
+data/AGENTS.md
+  s_fb85d167258370::t_a1a6fb68451c1c 1,3,5,7,9,11-15,17,19
+app/AGENTS.md
+  s_fb85d167258370::t_295cc0d55e68c2 1,3,5,7-10,12,14-17,19,21-23
+README.md
+  s_fb85d167258370::t_d1514165de74ef 3,7-11,13-14,16,18,20,22-24,27-30,33,35,37-39,41,43
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "d8ca8fc236b6842c3cde6dada3f11cdf7edc985f",
+  "prompts": {},
+  "humans": {
+    "h_3a16911fd9535c": {
+      "author": "David Navarro <dnavarro@hiberus.com>"
+    }
+  },
+  "sessions": {
+    "s_fb85d167258370": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e6c7ab2c-df4d-4c2c-a18f-6299c9de4c96",
+        "model": "unknown"
+      },
+      "human_author": "David Navarro <dnavarro@hiberus.com>"
+    }
+  }
+}
