@@ -1,19 +1,19 @@
-# :data · Guía del módulo
+# :data · Module guide
 
-Lee primero [la guía del repositorio](../AGENTS.md). Entre los módulos del proyecto, `:data` depende únicamente de `:domain`.
+General rules are in the [root guide](../AGENTS.md). This module depends only on `:domain`.
 
-## API pública
+## Public API
 
-`di/dataModule` es el punto de entrada público. El servicio Retrofit, los DTO, el mapeo, la caché, el reloj y el repositorio son `internal`.
+`di/dataModule` is the only public entry point. The Retrofit service, DTOs, mapping, cache, clock and repository are all `internal`.
 
-## Red y caché
+## Network and cache
 
-- `network/StarshipService` declara las peticiones Retrofit `GET starships/?search=…&page=…` y `GET starships/{id}/`. Las dos son `suspend`, así que cancelar la corrutina cancela la petición HTTP. La URL base es `SwapiBaseUrl = https://swapi.dev/api/`.
-- `network/StarshipDto` y `StarshipMapper` trabajan con los campos que usa la app (`ignoreUnknownKeys`). El ID se extrae de `url`. Los valores `unknown`, `n/a` o vacíos se convierten en `Quantity.Unknown`. Las cifras conservan el formato de origen (`1,600`, `30-165`).
-- `repository/StarshipRepositoryImpl` gestiona la caché y traduce los errores. `IOException` se convierte en `Connectivity` tras comprobar `ensureActive()`, para excluir llamadas canceladas. HTTP 404 se convierte en `NotFound`. Otros errores HTTP y `SerializationException` se convierten en `Unexpected`. `CancellationException` se propaga.
-- `cache/SearchCache` vive en memoria y usa el texto de `SearchQuery.value.lowercase()` y el número de página como clave. La respuesta conserva si SWAPI indica otra página en `next`. `SearchCacheTtl = 3.minutes` empieza cuando llega una respuesta correcta y la entrada es válida mientras `age < SearchCacheTtl`. Se guardan las listas vacías. Los errores y las cancelaciones se descartan. El reloj se inyecta mediante `TimeSource`, con `TimeSource.Monotonic` en producción y `TestTimeSource` en pruebas.
-- `di/dataModule` registra `OkHttpClient`, `StarshipService` y `StarshipRepository` como `single`.
+- `network/StarshipService` declares the Retrofit requests `GET starships/?search=…&page=…` and `GET starships/{id}/`. Both are `suspend`, so cancelling the coroutine cancels the HTTP request. The base URL is `SwapiBaseUrl = https://swapi.dev/api/`.
+- `network/StarshipDto` and `StarshipMapper` only handle the fields the app uses (`ignoreUnknownKeys`). The ID is extracted from `url`. The values `unknown`, `n/a` or empty become `Quantity.Unknown`. Numbers keep their original format (`1,600`, `30-165`).
+- `repository/StarshipRepositoryImpl` manages the cache and translates errors. `IOException` becomes `Connectivity` after checking `ensureActive()`, so cancelled calls are excluded. HTTP 404 becomes `NotFound`. Other HTTP errors and `SerializationException` become `Unexpected`. `CancellationException` is propagated.
+- `cache/SearchCache` lives in memory and uses `SearchQuery.value.lowercase()` plus the page number as the key. The stored response remembers whether SWAPI reports another page in `next`. `SearchCacheTtl = 3.minutes` starts when a successful response arrives, and the entry is valid while `age < SearchCacheTtl`. Empty lists are cached. Errors and cancellations are discarded. The clock is injected through `TimeSource`: `TimeSource.Monotonic` in production and `TestTimeSource` in tests.
+- `di/dataModule` registers `OkHttpClient`, `StarshipService` and `StarshipRepository` as `single`.
 
-## Pruebas
+## Tests
 
-Las pruebas de `src/test` se ejecutan sin red con `FakeStarshipService` y `TestTimeSource`. Comprueban que dos consultas equivalentes hacen una sola llamada, que distintas consultas tienen entradas independientes, que se reutiliza la caché justo antes de caducar, que a los tres minutos se hace una nueva llamada, que se reutiliza el valor actualizado y que se puede reintentar después de un fallo.
+The tests in `src/test` run without a network, using `FakeStarshipService` and `TestTimeSource`. They check that two equivalent queries make a single call, that different queries have independent entries, that the cache is reused just before it expires, that a new call is made at three minutes, that the refreshed value is reused, and that a failed request can be retried.

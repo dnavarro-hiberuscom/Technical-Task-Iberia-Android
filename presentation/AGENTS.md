@@ -1,40 +1,40 @@
-# :presentation · Guía del módulo
+# :presentation · Module guide
 
-Lee primero [la guía del repositorio](../AGENTS.md). Entre los módulos del proyecto, `:presentation` depende únicamente de `:domain`.
+General rules are in the [root guide](../AGENTS.md). This module depends only on `:domain`.
 
-## Estructura
+## Structure
 
-- `designsystem/` reúne el tema Material 3 (`StarshipsTheme`), los colores y sus pares de contraste (`Color.kt`), la tipografía, las formas y las medidas de `Dimens.kt`. Accede al espaciado y a los tamaños con `StarshipsTheme.spacing` y `StarshipsTheme.sizes`.
-- `di/presentationModule` registra los casos de uso como `factory` y los ViewModels con `viewModelOf`.
-- Cada pantalla tiene su carpeta (`search/` y `detail/`), un `XxxRoute` público para `:app`, un `XxxScreen` interno que se puede previsualizar y probar sin ViewModel, y su ViewModel y estado.
+- `designsystem/` holds the Material 3 theme (`StarshipsTheme`), the colors and their contrast pairs (`Color.kt`), typography, shapes and the dimensions in `Dimens.kt`. Access spacing and sizes through `StarshipsTheme.spacing` and `StarshipsTheme.sizes`.
+- `di/presentationModule` registers use cases as `factory` and ViewModels with `viewModelOf`.
+- Each screen has its own folder (`search/` and `detail/`) with a public `XxxRoute` for `:app`, an internal `XxxScreen` that can be previewed and tested without a ViewModel, and its ViewModel and state.
 
-## Compose y MVVM
+## Compose and MVVM
 
-- El flujo es unidireccional. La pantalla emite eventos como `onQueryChange` y `onClearQuery`. El ViewModel expone un único `StateFlow<XxxUiState>` de solo lectura y el Route lo observa con `collectAsStateWithLifecycle()`.
-- El ViewModel recibe los casos de uso por constructor. Mantén el acceso a `StarshipRepository` y la resolución de dependencias de Koin fuera de la clase.
-- Los errores llegan como `StarshipException` y se convierten en un estado tipado. La pantalla elige el mensaje con `stringResource`. Los mensajes de excepción quedan fuera de la interfaz.
-- Usa los modelos de `:domain` para mostrar el contenido cuando corresponda. La API para `:app` consiste en composables con callbacks e IDs de tipo `Int`.
+- Data flows one way. The screen emits events such as `onQueryChange` and `onClearQuery`. The ViewModel exposes a single read-only `StateFlow<XxxUiState>`, and the Route observes it with `collectAsStateWithLifecycle()`.
+- The ViewModel receives use cases through its constructor. Keep `StarshipRepository` access and Koin dependency resolution out of the class.
+- Errors arrive as `StarshipException` and are turned into a typed state. The screen picks the message with `stringResource`. Exception messages never reach the UI.
+- Use `:domain` models to show content where it makes sense. The API for `:app` consists of composables with callbacks and `Int` IDs.
 
-## Tema, medidas y textos
+## Theme, dimensions and text
 
-- Define los colores y las medidas en `dp` o `sp` en `designsystem/`. Añade allí las medidas que falten.
-- Guarda cada texto propio de la app en recursos, incluidas las descripciones de contenido y las unidades. Usa argumentos y `plurals` cuando corresponda. Añade cada clave al archivo base en inglés (`res/values/strings.xml`) y a la traducción al español (`res/values-es/strings.xml`). Los datos de SWAPI se muestran tal como llegan.
+- Define colors and dimensions in `dp` or `sp` in `designsystem/`. Add any missing dimensions there.
+- Keep every piece of app text in resources, including content descriptions and units. Use arguments and `plurals` where needed. Add each key to the base English file (`res/values/strings.xml`) and to the Spanish translation (`res/values-es/strings.xml`). SWAPI data is shown as received.
 
-## Accesibilidad
+## Accessibility
 
-- Mantén una etiqueta persistente en el buscador, nombres localizados para las acciones de limpiar y volver y un área táctil de al menos `StarshipsTheme.sizes.minTouchTarget`.
-- Cada fila de resultados es un único elemento enfocable y pulsable. Para imágenes decorativas, usa `contentDescription = null`.
-- Comunica los estados de carga, vacío y error con texto y marca los títulos de pantalla con `heading()`. Comprueba que el contenido siga visible con un tamaño de letra grande.
+- Keep a persistent label on the search field, localized names for the clear and back actions, and a touch target of at least `StarshipsTheme.sizes.minTouchTarget`.
+- Each result row is a single focusable, clickable element. For decorative images, use `contentDescription = null`.
+- Communicate loading, empty and error states with text, and mark screen titles with `heading()`. Check that content stays visible with a large font size.
 
-## Paginación de búsqueda
+## Search pagination
 
-El ViewModel mantiene los resultados al cargar la siguiente página y distingue la carga y el fallo del botón **Cargar más**. Una nueva edición cancela la carga pendiente y reinicia la lista.
+The ViewModel keeps the results while loading the next page, and tracks the loading and failure states of the **Load more** button separately. A new edit cancels the pending load and resets the list.
 
-## Imágenes de las naves
+## Starship images
 
-`designsystem/StarshipImage` carga la imagen con Coil a partir del ID de SWAPI. Mantén en Presentation tanto la carga desde el CDN como el icono local de radar. Las pruebas de Compose usan el recurso local y respuestas controladas del repositorio.
+`designsystem/StarshipImage` loads the image with Coil from the SWAPI ID. Keep both the CDN loading and the local radar icon in Presentation. Compose tests use the local resource and controlled repository responses.
 
-## Pruebas
+## Tests
 
-- **Unitarias (`src/test`).** ViewModels con `kotlinx-coroutines-test` y tiempo virtual. Casos de uso con repositorios simulados.
-- **Compose (`src/androidTest`).** Semántica del buscador, selección de una fila y detalle, con textos leídos de los recursos. Ejecuta `./gradlew :presentation:connectedDebugAndroidTest`.
+- **Unit (`src/test`).** ViewModels with `kotlinx-coroutines-test` and virtual time. Use cases with mocked repositories.
+- **Compose (`src/androidTest`).** Search field semantics, selecting a row and the detail screen, with text read from resources. Run `./gradlew :presentation:connectedDebugAndroidTest`.

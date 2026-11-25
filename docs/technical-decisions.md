@@ -1,66 +1,107 @@
-# Decisiones técnicas
+# Technical decisions
 
-## Alcance y elección de la API
+## The API
 
-Elegí Star Wars porque me apetecía trabajar con un tema que me gusta. SWAPI ya ofrecía los datos necesarios para buscar por nombre o modelo y abrir una ficha por ID. Ese ID se puede sacar de la URL del recurso. [Documentación de SWAPI para naves](https://swapi.dev/documentation#starships)
+I chose SWAPI because I like Star Wars and because it had exactly what the assessment asked for: search by name or model, and a detail view by ID. That ID comes from the resource URL itself. [SWAPI starships documentation](https://swapi.dev/documentation#starships)
 
-Al integrar SWAPI vi que las respuestas venían sin imágenes. Buscando encontré en Reddit **Star Wars Gallery**. El CDN usa los mismos ID's, así que puedo cargar la imagen correspondiente por separado. Si el CDN falla, la pantalla conserva los datos de la nave y muestra un icono local de radar. [Origen de las imágenes y ejemplo de URL](../README.md#imágenes-de-las-naves)
+SWAPI has no images. While searching I found **Star Wars Gallery** on Reddit, a CDN that uses the same IDs, so I load the image separately. If the CDN fails, the detail screen still shows the data with a local radar icon. [Image source](../README.md#starship-images)
 
-## Por qué elegí estas librerías
+Some values come as `unknown` or `n/a`, and some numbers include separators or ranges (`1,600`, `30-165`). The model represents them with `Quantity.Known(value)` and `Quantity.Unknown`, and the screen shows unknown values as text.
 
-| Librería                                    | Por qué la elegí                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
-|---------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **Jetpack Compose y Material 3**            | Elegí Jetpack Compose porque la app partía de cero y quería usar la herramienta moderna que Google recomienda para crear interfaces nativas de Android con Kotlin. Usé Material 3 para tener una base común de componentes y aplicar el mismo tema en la búsqueda y la ficha. Si en el futuro quisiera compartir la interfaz con iOS, ya partiría del mismo modelo declarativo y podría adaptar las pantallas a Compose Multiplatform. [Jetpack Compose en Android Developers](https://developer.android.com/compose) · [Compose Multiplatform](https://kotlinlang.org/compose-multiplatform/)                                                                                                                                                                                                                                                       |
-| **Koin**                                    | Elegí Koin porque podía configurar las dependencias de esta app pequeña directamente en Kotlin, en el punto donde se ensamblan los módulos. Así, los ViewModels y los casos de uso reciben sus dependencias por constructor y puedo probarlos con dobles. También me interesaba que Koin se pudiera mantener si el proyecto crece hacia Kotlin Multiplatform, con dependencias comunes y otras específicas de Android o iOS. [Koin en Kotlin Multiplatform](https://insert-koin.io/docs/reference/koin-mp/kmp/)                                                                                                                                                                                                                                                                                                                                      |
-| **Retrofit, OkHttp y Kotlin Serialization** | La entrega era una app nativa solo para Android. Elegí Retrofit con OkHttp porque encajaba con ese alcance y me permitía definir la búsqueda y el detalle como funciones `suspend` tipadas. También cubría un requisito de la prueba, al cancelar la corrutina de búsqueda, se cancela la petición HTTP. Usé Kotlin Serialization para convertir las respuestas JSON en DTO y leer los campos que necesita la app. Si el encargo hubiera pedido compartir la capa de red entre Android e iOS con Kotlin Multiplatform, habría elegido Ktor Client. Me habría permitido declarar las peticiones y la configuración común en Kotlin compartido, con un motor HTTP para cada plataforma. En este proyecto, el contrato del repositorio marca dónde haría ese cambio. [Plataformas de Ktor Client](https://ktor.io/docs/client-supported-platforms.html) |
-| **Navigation Compose**                      | Elegí Navigation Compose porque las dos pantallas ya estaban hechas con Compose y el recorrido era sencillo. La ruta de detalle recibe el ID de la nave, y al volver se recuperan la consulta y los resultados que siguen en la pantalla de búsqueda.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
-| **Coil**                                    | Elegí Coil porque ya lo conocía y su `AsyncImage` encajaba con Compose. Las imágenes del CDN tienen su propia carga y caché, así que puedo mostrar los datos en cuanto llegan y usar el icono local mientras se carga la imagen. Si llegara a compartir la interfaz, Coil 3 también permite usar `AsyncImage` con Compose Multiplatform. [Coil con Compose](https://coil-kt.github.io/coil/compose/)                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+## Libraries
 
-## Límites entre módulos
+### Jetpack Compose and Material 3
 
-```text
-:app          → :presentation, :data
-:presentation → :domain
-:data         → :domain
-:domain       → ningún otro módulo del proyecto
-```
+The app started from scratch, so I used the toolkit Google recommends today for native UIs. Material 3 gives me common components and a single theme for search and detail. If the UI ever had to be shared with iOS, Compose Multiplatform builds on the same model. [Jetpack Compose](https://developer.android.com/compose) · [Compose Multiplatform](https://kotlinlang.org/compose-multiplatform/)
 
-Las flechas muestran las dependencias de Gradle. `:domain` define los modelos, los casos de uso y la interfaz `StarshipRepository`. `:data` implementa esa interfaz, convierte los DTO en modelos de dominio y gestiona la caché. `:presentation` llama a los casos de uso y utiliza los modelos de dominio para mostrar los datos. `:app` monta la navegación y las dependencias, y accede a Data a través de `dataModule`.
+### Koin
 
-Esta separación me permite simular resultados, fallos y cancelaciones en las pruebas del ViewModel. También puedo cambiar el cliente HTTP o la caché dentro de Data mientras mantenga el contrato del repositorio. Las pruebas de arquitectura verifican ese límite y comprueban que los ViewModels usan casos de uso inyectados por constructor.
+For a small app it was enough to declare dependencies in Kotlin, right where the modules are wired together. ViewModels and use cases get everything through their constructor, so in tests I simply pass test doubles. Koin also works with Kotlin Multiplatform if the project grew in that direction. [Koin for KMP](https://insert-koin.io/docs/reference/koin-mp/kmp/)
 
-Durante una búsqueda, el ViewModel llama a `SearchStarshipsUseCase`, que pertenece a Domain. Ese caso de uso llama a la interfaz `StarshipRepository` y Koin le proporciona la implementación de Data. En Gradle, la dependencia va de Data a Domain porque la interfaz está definida allí.
+### Retrofit, OkHttp and Kotlin Serialization
 
-## Del buscador a la pantalla
+Since the deliverable was Android only, Retrofit with OkHttp was a good fit: search and detail are typed `suspend` functions, and it covers a key requirement of the assessment: cancelling the coroutine cancels the HTTP request. Kotlin Serialization turns the JSON into DTOs.
 
-![Flujo de búsqueda entre Compose, el ViewModel, el dominio, el repositorio y SWAPI](./search-flow.png)
+If the network layer had to be shared with iOS, I would use Ktor Client. [Ktor platforms](https://ktor.io/docs/client-supported-platforms.html)
 
-[Abrir el diagrama de búsqueda](./search-flow.png)
+### Navigation Compose
 
-1. Al escribir `wing`, Compose envía la edición a `SearchViewModel`. El ViewModel recibe las ediciones en un flujo y publica el estado de la pantalla en un `StateFlow` de solo lectura. Compose lo observa respetando el ciclo de vida.
-2. `collectLatest` cancela el trabajo anterior al recibir una edición. Dentro del bloque nuevo espera 300 ms antes de llamar a `SearchStarshipsUseCase`. Una consulta vacía devuelve la pantalla al estado inicial. Si ya había una llamada HTTP en curso, la cancelación llega hasta esa llamada.
-3. El caso de uso valida la consulta y llama al repositorio. Si hay una respuesta vigente para esa consulta normalizada, Data devuelve la lista de la caché. Cuando la entrada ha caducado o todavía no existe, pide la primera página a SWAPI, mapea el JSON y guarda la respuesta correcta. La caché guarda cada página en memoria durante tres minutos y también admite respuestas sin coincidencias. Las pruebas controlan un reloj monotónico para comprobar cuándo caduca.
-4. Antes de publicar un resultado o un error, el ViewModel comprueba que el trabajo siga activo y que la edición corresponda a la consulta actual. Un fallo de red se convierte en un error tipado. Compose actualiza la pantalla con el estado publicado.
+Two Compose screens with a simple flow. The detail route receives the ID and, when you go back, search keeps its query and results.
 
-Si SWAPI indica que quedan páginas, aparece **Cargar más**. La app pide la siguiente página con la misma consulta, añade sus naves por ID y conserva las filas mientras carga o si hay que reintentar. Cambiar la consulta cancela esa petición y empieza de nuevo en la primera página.
+### Coil
 
-Al tocar una fila se abre la ficha por ID. `GetStarshipUseCase` obtiene sus datos y el ViewModel de detalle publica el estado. Coil carga la imagen de forma independiente tanto en la lista como en la ficha.
+I already knew it, and `AsyncImage` plugs straight into Compose. Images have their own loading and cache, so the data shows up as soon as it arrives and the image fills in afterwards. [Coil with Compose](https://coil-kt.github.io/coil/compose/)
 
-## Accesibilidad y animación
+## Version catalog and bundles
 
-- Las etiquetas y los mensajes de la app viven en recursos. El buscador es editable y tiene etiqueta. Las acciones de limpiar y volver tienen descripciones traducidas.
-- Cada tarjeta de resultados se puede pulsar como un único elemento. Los títulos cuentan con semántica de encabezado y en la ficha se agrupan las etiquetas y sus valores. Los iconos e imágenes decorativos quedan fuera de la lectura.
-- Durante la carga se muestra texto y se expone semántica de progreso indeterminado. El emblema rebelde gira mientras dura la búsqueda. Los mensajes de estado pueden anunciarse mediante regiones activas de prioridad moderada.
-- En pantallas estrechas o con letra grande, las tarjetas y los campos de la ficha se apilan.
+All versions live in `gradle/libs.versions.toml`. To avoid repeating the same list of libraries in each module, the catalog defines three *bundles*, which are just named groups:
 
-## Validación
+| Bundle         | Used by              | What it groups                                                                  |
+|----------------|----------------------|---------------------------------------------------------------------------------|
+| `data`         | `:data`              | Koin, coroutines, Kotlin Serialization, Retrofit with its converter, and OkHttp. |
+| `presentation` | `:presentation`      | Koin for ViewModels and Compose, lifecycle, Compose UI, Material 3 and Coil.    |
+| `domain-test`  | `:domain` tests      | JUnit, `kotlinx-coroutines-test` and MockK.                                     |
 
-| Área         | Qué comprueba                                                                                                                                                                                                      |
-|--------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Dominio      | Validación de consultas, recorte de espacios y acceso al repositorio por su contrato.                                                                                                                              |
-| Datos        | Mapeo, uso de la caché a los 2:59, caducidad a los 3:00, actualización y reintentos con un servicio simulado y un reloj controlado.                                                                                |
-| Presentación | Cancelación antes de que termine la espera de la nueva consulta, descarte de resultados y errores antiguos, y estados de carga y reintento del detalle.                                                            |
-| App          | Configuración de Koin y reglas de dependencia entre módulos en el código fuente.                                                                                                                                   |
-| Compose      | Edición y limpieza de la búsqueda, aviso de cancelación, búsqueda sin coincidencias, etiquetas y valores de la ficha y vuelta a la misma consulta. Se usan datos controlados y un recurso local para las imágenes. |
+- Each module uses them in one line, for example `implementation(libs.bundles.data)`. Nothing changes compared to declaring them one by one (versions still come from the catalog), but I find it more practical to keep each layer's libraries in a single place.
+- BOMs (`koin-bom`, `compose-bom`) go separately with `platform(...)`, in each module.
+- Anything only one module uses (Compose tests, `ui-tooling`, `koin-test`) stays on its own in that module's `build.gradle.kts`.
+- To add a shared library, declare it in `[libraries]` and add its alias to the right bundle.
 
---
+## Modules
+
+The idea is simple: **Domain is the contract**. Data implements it, Presentation uses it, and neither knows about the other. App connects them at startup.
+
+| Module          | What it's for                                                                                     | Depends on, and why                                                                                        |
+|-----------------|---------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------|
+| `:domain`       | Models, use cases and the `StarshipRepository` interface.                                         | Nothing. It's pure Kotlin, with no Android or Retrofit, so its tests are simple and fast.                  |
+| `:data`         | Implements `StarshipRepository` with Retrofit, DTOs, mapping and cache. Everything is `internal` except `dataModule`. | `:domain`, because it has to see the interface to implement it. Domain never points to Data.               |
+| `:presentation` | Screens, ViewModels and theme. Calls use cases, never the repository.                             | `:domain`, to use the use cases and the `Starship` model. It doesn't know whether data comes from the network or the cache. |
+| `:app`          | Starts the app: initializes Koin, hosts the activity and builds the navigation.                   | `:presentation` to show the screens, and `:data` only to register `dataModule` in Koin.                    |
+
+**How they connect.** The use cases need a `StarshipRepository`, but they only know the interface. At startup, `StarshipsApplication` registers `dataModule` in Koin, which provides the implementation, and `presentationModule`, with the use cases and ViewModels. That's why `:app` depends on `:data`, and it's its only import from that module. The repository and the HTTP client are `single`, so the cache lives as long as the app. Use cases are `factory`, and Domain knows nothing about Koin. `KoinGraphTest` checks the graph with `verify()`.
+
+**What I get out of it.** In the ViewModel tests I can simulate results, failures and cancellations without a network, and I can swap the HTTP client or the cache without touching anything outside Data. `ArchitectureRulesTest` makes sure nobody crosses these boundaries: `:app` only imports `dataModule`, and ViewModels receive use cases through their constructor.
+
+## How search works
+
+![Search flow across Compose, the ViewModel, the domain, the repository and SWAPI](./search-flow.png)
+
+[Open the diagram](./search-flow.png)
+
+1. When you type `wing`, Compose sends each edit to `SearchViewModel`, which publishes the state in a read-only `StateFlow`. Compose observes it in a lifecycle-aware way.
+2. `collectLatest` cancels the previous work as soon as a new edit arrives. Inside the new block, the ViewModel waits 300 ms and calls `SearchStarshipsUseCase`. If an HTTP request was in flight, it is cancelled too. An empty query takes the screen back to its initial state.
+3. The use case validates the query and calls the repository. If there is a valid response for that query, Data returns it without going to the network. If there isn't one, or it has expired, it requests the page from SWAPI and stores the response. Each page is kept in memory for three minutes, including searches with no results. Tests use a controlled clock to check expiry.
+4. Before publishing a result or an error, the ViewModel checks that the search is still active and matches the current query. A network failure becomes a typed error.
+
+If there are more pages, **Load more** appears. The app requests the next one with the same query, adds the new starships without duplicates and keeps the visible ones while loading or if a retry is needed. If you change the query, that request is cancelled and it starts again from the first page.
+
+Tapping a row opens the detail screen by ID: `GetStarshipUseCase` fetches the data and the detail ViewModel publishes the state. Coil loads the image on its own, both in the list and in the detail screen.
+
+### Why it waits 300 ms (debounce)
+
+The wait is there to **save API calls and avoid overloading the server**. Without it, typing `x-wing` would fire one request per keystroke, and almost all of them would be thrown away.
+
+It's not what makes search correct. Cancellation is handled by `collectLatest`, with or without the wait: editing cuts off the request in flight and a stale result is never shown. It's not there to make up for slowness either, because the SWAPI endpoint responds very quickly.
+
+## Accessibility
+
+- Text and messages live in resources. The search field has a label, and the clear and back actions have translated descriptions.
+- Each result is read and tapped as a single element. Titles are headings, and on the detail screen each label is grouped with its value. Decorative icons are not read out.
+- While loading, the screen shows text and progress semantics, and the Rebel emblem spins. Status messages are announced without interrupting.
+- On narrow screens or with large text, the cards and detail fields stack vertically.
+
+## Validation
+
+| Area         | What it checks                                                                                                                       |
+|--------------|--------------------------------------------------------------------------------------------------------------------------------------|
+| Domain       | Query validation, whitespace trimming and use of the repository through its contract.                                               |
+| Data         | Mapping, cache still valid at 2:59 and expired at 3:00, refresh and retries, with a fake service and a controlled clock.             |
+| Presentation | Cancellation before the wait ends, discarding stale results and errors, and detail loading and retry.                                |
+| App          | Koin graph and dependency rules between modules.                                                                                     |
+| Compose      | Editing and clearing the search, cancellation notice, search with no results, detail fields and going back to the same query.        |
+
+Compose tests use controlled data and a local image.
+
+### Manual checks
+
+Against the real SWAPI I checked that searching for `e` and tapping **Load more** goes from 10 to 20 starships. I also opened the X-wing, went back to the query, cleared the field and tried a search with no results. I reviewed the layout on a simulated tablet and on a small screen with dark mode and text at 160 %. A manual check with TalkBack is still pending.
