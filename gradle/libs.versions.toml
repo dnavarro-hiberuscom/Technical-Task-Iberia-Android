@@ -49,6 +49,36 @@ coil-network-okhttp = { group = "io.coil-kt.coil3", name = "coil-network-okhttp"
 mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
 
+[bundles]
+# Platforms (koin-bom, compose-bom) stay outside the bundles and are declared in each module.
+data = [
+    "koin-core",
+    "kotlinx-coroutines-core",
+    "kotlinx-serialization-json",
+    "retrofit",
+    "retrofit-converter-kotlinx-serialization",
+    "okhttp",
+]
+domain-test = [
+    "junit",
+    "kotlinx-coroutines-test",
+    "mockk",
+]
+presentation = [
+    "koin-core",
+    "koin-core-viewmodel",
+    "koin-androidx-compose",
+    "kotlinx-coroutines-core",
+    "androidx-lifecycle-runtime-compose",
+    "androidx-lifecycle-viewmodel-compose",
+    "androidx-compose-material3",
+    "androidx-compose-ui",
+    "androidx-compose-ui-graphics",
+    "androidx-compose-ui-tooling-preview",
+    "coil-compose",
+    "coil-network-okhttp",
+]
+
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 android-library = { id = "com.android.library", version.ref = "agp" }

@@ -22,12 +22,7 @@ android {
 dependencies {
     implementation(project(":domain"))
     implementation(platform(libs.koin.bom))
-    implementation(libs.koin.core)
-    implementation(libs.kotlinx.coroutines.core)
-    implementation(libs.kotlinx.serialization.json)
-    implementation(libs.retrofit)
-    implementation(libs.retrofit.converter.kotlinx.serialization)
-    implementation(libs.okhttp)
+    implementation(libs.bundles.data)
 
     testImplementation(libs.junit)
     testImplementation(libs.kotlinx.coroutines.test)
