@@ -1,20 +1,20 @@
-# :domain · Guía del módulo
+# :domain · Module guide
 
-Lee primero [la guía del repositorio](../AGENTS.md).
+General rules are in the [root guide](../AGENTS.md). This module depends on nothing else in the project.
 
-Este módulo es Kotlin/JVM puro. Mantén las dependencias de Android, Retrofit, Koin y otros módulos del proyecto fuera del dominio.
+It's pure Kotlin/JVM. Keep Android, Retrofit, Koin and other project modules out of the domain.
 
-## Contenido
+## Contents
 
-- `model/Starship` contiene `id` (extraído de la URL de SWAPI), `name`, `model`, `manufacturer`, `length` y `crew`.
-- `model/Quantity` distingue `Known(value)` y `Unknown`. `value` conserva el formato de origen (`12.5`, `1,600`, `30-165`).
-- `model/SearchQuery` reúne la validación de la consulta. `SearchQuery.from(raw)` quita los espacios de los extremos y devuelve `null` si el resultado queda vacío.
-- `model/StarshipException` define `Connectivity`, `NotFound` y `Unexpected`. La cancelación se propaga sin envolverla.
-- `repository/StarshipRepository` define el contrato con funciones `suspend` que implementa `:data`.
-- `usecase/SearchStarships` construye una `SearchQuery` en `invoke(rawQuery)`. Si queda vacía, devuelve una página vacía sin llamar al repositorio. Para las consultas válidas llama a `repository.searchStarships(query, page)` y devuelve una `StarshipPage` con los resultados y la siguiente página, si existe.
-- `usecase/GetStarship` devuelve `repository.getStarship(id)` desde `invoke(id)`.
+- `model/Starship` holds `id` (extracted from the SWAPI URL), `name`, `model`, `manufacturer`, `length` and `crew`.
+- `model/Quantity` distinguishes `Known(value)` from `Unknown`. `value` keeps the original format (`12.5`, `1,600`, `30-165`).
+- `model/SearchQuery` holds the query validation. `SearchQuery.from(raw)` trims leading and trailing whitespace and returns `null` if the result is empty.
+- `model/StarshipException` defines `Connectivity`, `NotFound` and `Unexpected`. Cancellation is propagated without wrapping it.
+- `repository/StarshipRepository` defines the contract with `suspend` functions that `:data` implements.
+- `usecase/SearchStarshipsUseCase` builds a `SearchQuery` in `invoke(rawQuery)`. If it's empty, it returns an empty page without calling the repository. For valid queries it calls `repository.searchStarships(query, page)` and returns a `StarshipPage` with the results and the next page, if any.
+- `usecase/GetStarshipUseCase` returns `repository.getStarship(id)` from `invoke(id)`.
 
-## Reglas y pruebas
+## Rules and tests
 
-- Los casos de uso carecen de estado, tienen un único `operator fun invoke` y reciben sus dependencias por constructor. Se registran en Koin desde `:presentation`.
-- Las pruebas unitarias de `src/test` usan MockK para simular el repositorio y comprobar las consultas vacías sin llamadas, el recorte de espacios, los resultados, las listas vacías y la propagación de fallos.
+- Use cases are stateless, have a single `operator fun invoke` and receive their dependencies through the constructor. They are registered in Koin from `:presentation`.
+- The unit tests in `src/test` use MockK to mock the repository and check that empty queries make no calls, whitespace trimming, results, empty lists and failure propagation.
