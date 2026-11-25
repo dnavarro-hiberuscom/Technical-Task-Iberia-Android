@@ -31,11 +31,11 @@ class ArchitectureRulesTest {
     @Test
     fun `only the composition root of app imports data, and only dataModule`() {
         val dataImports = kotlinSources("app").flatMap { file ->
-            file.imports().filter { it.startsWith(DataPackage) }.map { file.name to it }
+            file.imports().filter { it.startsWith(DATA_PACKAGE) }.map { file.name to it }
         }
 
         assertEquals(
-            listOf("StarshipsApplication.kt" to "$DataPackage.di.dataModule"),
+            listOf("StarshipsApplication.kt" to "$DATA_PACKAGE.di.dataModule"),
             dataImports,
         )
     }
@@ -43,7 +43,7 @@ class ArchitectureRulesTest {
     @Test
     fun `presentation and domain never reference data`() {
         val offenders = (kotlinSources("presentation") + kotlinSources("domain"))
-            .filter { file -> file.readText().contains(DataPackage) }
+            .filter { file -> file.readText().contains(DATA_PACKAGE) }
             .map { it.name }
 
         assertTrue("Data referenced from: $offenders", offenders.isEmpty())
@@ -51,7 +51,7 @@ class ArchitectureRulesTest {
 
     @Test
     fun `app does not import domain`() {
-        val offenders = kotlinSources("app").filter { file -> file.imports().any { it.startsWith(DomainPackage) } }
+        val offenders = kotlinSources("app").filter { file -> file.imports().any { it.startsWith(DOMAIN_PACKAGE) } }
             .map { it.name }
 
         assertTrue("Domain imported by app: $offenders", offenders.isEmpty())
@@ -63,8 +63,8 @@ class ArchitectureRulesTest {
         assertTrue("No ViewModels found", viewModels.isNotEmpty())
 
         viewModels.forEach { file ->
-            val domainImports = file.imports().filter { it.startsWith(DomainPackage) }
-            val notAllowed = domainImports.filterNot { it.startsWith("$DomainPackage.usecase.") || it.startsWith("$DomainPackage.model.") }
+            val domainImports = file.imports().filter { it.startsWith(DOMAIN_PACKAGE) }
+            val notAllowed = domainImports.filterNot { it.startsWith("$DOMAIN_PACKAGE.usecase.") || it.startsWith("$DOMAIN_PACKAGE.model.") }
             assertTrue("${file.name} imports from domain: $notAllowed", notAllowed.isEmpty())
 
             val text = file.readText()
@@ -75,8 +75,8 @@ class ArchitectureRulesTest {
     }
 
     private companion object {
-        const val DataPackage = "es.technical_task_iberia_android.data"
-        const val DomainPackage = "es.technical_task_iberia_android.domain"
+        const val DATA_PACKAGE = "es.technical_task_iberia_android.data"
+        const val DOMAIN_PACKAGE = "es.technical_task_iberia_android.domain"
 
         val ForbiddenInViewModels = listOf("StarshipRepository", "org.koin", "KoinComponent", "inject()", "get()")
     }

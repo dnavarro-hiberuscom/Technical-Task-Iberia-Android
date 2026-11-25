@@ -48,7 +48,7 @@ internal class StarshipRepositoryImpl(
         try {
             block()
         } catch (e: HttpException) {
-            throw if (e.code() == HttpNotFound) StarshipException.NotFound(e) else StarshipException.Unexpected(e)
+            throw if (e.code() == HTTP_NOT_FOUND) StarshipException.NotFound(e) else StarshipException.Unexpected(e)
         } catch (e: IOException) {
             currentCoroutineContext().ensureActive()
             throw StarshipException.Connectivity(e)
@@ -57,6 +57,6 @@ internal class StarshipRepositoryImpl(
         }
 
     private companion object {
-        const val HttpNotFound = 404
+        const val HTTP_NOT_FOUND = 404
     }
 }

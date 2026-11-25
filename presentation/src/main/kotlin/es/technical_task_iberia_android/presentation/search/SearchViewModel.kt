@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import es.technical_task_iberia_android.domain.model.SearchQuery
 import es.technical_task_iberia_android.domain.model.StarshipException
-import es.technical_task_iberia_android.domain.usecase.SearchStarships
+import es.technical_task_iberia_android.domain.usecase.SearchStarshipsUseCase
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.currentCoroutineContext
@@ -26,7 +26,7 @@ import kotlinx.coroutines.launch
  * the text changes, not 300 ms later.
  */
 internal class SearchViewModel(
-    private val searchStarships: SearchStarships,
+    private val searchStarshipsUsecase: SearchStarshipsUseCase,
 ) : ViewModel() {
 
     // Separate edits can have the same text (type, clear, retype before the collector resumes).
@@ -69,12 +69,12 @@ internal class SearchViewModel(
         _uiState.update { it.copy(content = results.copy(nextPageStatus = NextPageStatus.Loading)) }
         nextPageJob = viewModelScope.launch {
             val content = try {
-                val page = searchStarships(edit.text, nextPage)
+                val page = searchStarshipsUsecase(edit.text, nextPage)
                 SearchContent.Results(
                     starships = (results.starships + page.starships).distinctBy { it.id },
                     nextPage = page.nextPage,
                 )
-            } catch (e: StarshipException) {
+            } catch (_: StarshipException) {
                 results.copy(nextPageStatus = NextPageStatus.Failed)
             }
             publishContent(edit, content)
@@ -87,7 +87,7 @@ internal class SearchViewModel(
 
         delay(SearchDebounce)
         val content = try {
-            val page = searchStarships(text)
+            val page = searchStarshipsUsecase(text)
             if (page.starships.isEmpty() && page.nextPage == null) {
                 SearchContent.Empty
             } else {

@@ -24,7 +24,7 @@ import es.technical_task_iberia_android.domain.model.SearchQuery
 import es.technical_task_iberia_android.domain.model.Starship
 import es.technical_task_iberia_android.domain.model.StarshipPage
 import es.technical_task_iberia_android.domain.repository.StarshipRepository
-import es.technical_task_iberia_android.domain.usecase.SearchStarships
+import es.technical_task_iberia_android.domain.usecase.SearchStarshipsUseCase
 import es.technical_task_iberia_android.presentation.R
 import es.technical_task_iberia_android.presentation.designsystem.StarshipsTheme
 import kotlinx.coroutines.CompletableDeferred
@@ -52,7 +52,7 @@ class SearchScreenTest {
     private fun string(id: Int, vararg args: Any) = rule.activity.getString(id, *args)
 
     private fun launch(repository: StarshipRepository = StubRepository(), onClick: (Int) -> Unit = {}) {
-        val viewModel = SearchViewModel(SearchStarships(repository))
+        val viewModel = SearchViewModel(SearchStarshipsUseCase(repository))
         rule.setContent {
             CompositionLocalProvider(LocalInspectionMode provides true) {
                 StarshipsTheme {
