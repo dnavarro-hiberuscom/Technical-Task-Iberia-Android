@@ -1,0 +1,53 @@
+data/src/test/kotlin/es/technical_task_iberia_android/data/repository/StarshipRepositoryCacheTest.kt
+  h_3a16911fd9535c 126,143
+AGENTS.md
+  h_3a16911fd9535c 17,32-33
+  h_3a16911fd9535c 16,18-21
+README.md
+  h_3a16911fd9535c 8,49,74
+  h_3a16911fd9535c 7,9-11,73,75-79
+data/src/main/kotlin/es/technical_task_iberia_android/data/repository/StarshipRepositoryImpl.kt
+  h_3a16911fd9535c 51,60
+domain/src/main/kotlin/es/technical_task_iberia_android/domain/usecase/SearchStarshipsUseCase.kt
+  h_3a16911fd9535c 1-20
+app/src/main/AndroidManifest.xml
+  h_3a16911fd9535c 2
+presentation/src/main/kotlin/es/technical_task_iberia_android/presentation/search/SearchViewModel.kt
+  h_3a16911fd9535c 7,29,72,77,90
+app/src/androidTest/kotlin/es/technical_task_iberia_android/SearchToDetailFlowTest.kt
+  h_3a16911fd9535c 62,93
+presentation/src/main/kotlin/es/technical_task_iberia_android/presentation/di/PresentationModule.kt
+  h_3a16911fd9535c 3-4,18-19
+domain/src/test/kotlin/es/technical_task_iberia_android/domain/usecase/SearchStarshipsUseCaseTest.kt
+  h_3a16911fd9535c 1-75
+app/src/test/kotlin/es/technical_task_iberia_android/ArchitectureRulesTest.kt
+  h_3a16911fd9535c 34,38,46,54,66-67,78-79
+app/src/test/kotlin/es/technical_task_iberia_android/KoinGraphTest.kt
+  h_3a16911fd9535c 4,11
+domain/src/test/kotlin/es/technical_task_iberia_android/domain/usecase/GetStarshipUseCaseTest.kt
+  h_3a16911fd9535c 1-48
+presentation/src/test/kotlin/es/technical_task_iberia_android/presentation/detail/DetailViewModelTest.kt
+  h_3a16911fd9535c 9,51
+presentation/src/main/kotlin/es/technical_task_iberia_android/presentation/detail/DetailViewModel.kt
+  h_3a16911fd9535c 6,17,37
+docs/technical-decisions.md
+  h_3a16911fd9535c 7,12,32,41,47,59
+  h_3a16911fd9535c 11,13-14,16-17,58,60-64
+presentation/src/androidTest/kotlin/es/technical_task_iberia_android/presentation/search/SearchScreenTest.kt
+  h_3a16911fd9535c 27,55
+presentation/src/test/kotlin/es/technical_task_iberia_android/presentation/search/SearchViewModelTest.kt
+  h_3a16911fd9535c 4,35,234
+domain/src/main/kotlin/es/technical_task_iberia_android/domain/usecase/GetStarshipUseCase.kt
+  h_3a16911fd9535c 1-10
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "dfcfdf776f283271cd6bfa032bb2d977162fe644",
+  "prompts": {},
+  "humans": {
+    "h_3a16911fd9535c": {
+      "author": "David Navarro <dnavarro@hiberus.com>"
+    }
+  }
+}
