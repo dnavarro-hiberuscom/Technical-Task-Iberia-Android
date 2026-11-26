@@ -83,6 +83,12 @@ The wait is there to **save API calls and avoid overloading the server**. Withou
 
 It's not what makes search correct. Cancellation is handled by `collectLatest`, with or without the wait: editing cuts off the request in flight and a stale result is never shown. It's not there to make up for slowness either, because the SWAPI endpoint responds very quickly.
 
+### Why the cache is in memory
+
+The brief says an in-memory cache is enough and disk persistence is optional, so I kept it simple, with a map keyed by query and page, with a three-minute expiry (`SearchCacheTtl`), behind the `StarshipRepository` interface. It does what is asked, with no network call while the entry is valid and a refresh once it expires, and it is easy to test with a controlled clock.
+
+The trade-off is that the cache is lost when the process dies and there is no offline mode. I didn't add Room because it brings new dependencies, entities, a DAO and extra mapping, and none of that improves what the brief values most, which is clarity, separation of layers and cancellation. If offline support were needed, Room would fit as a second level inside `:data`, with no changes to `:domain` or `:presentation`.
+
 ## Accessibility
 
 - Text and messages live in resources. The search field has a label, and the clear and back actions have translated descriptions.

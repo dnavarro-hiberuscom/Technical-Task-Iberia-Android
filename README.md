@@ -35,7 +35,7 @@ SWAPI doesn't return images. I use the community CDN **Star Wars Gallery**, whic
 The details are in the [technical decisions](docs/technical-decisions.md): chosen libraries, how search flows through each module, debounce, bundles and tests.
 
 - **Architecture.** Four Gradle modules: `:domain` (pure Kotlin), `:data`, `:presentation` and `:app`, which only wires things together. Dependencies point towards `:domain`.
-- **Cache.** In memory for three minutes per normalized query and page. If there's a valid entry, no network call is made; if it has expired, the data is fetched and the cache updated.
+- **Cache.** In memory for three minutes per normalized query and page. If there's a valid entry, no network call is made; if it has expired, the data is fetched and the cache updated. It stays in memory on purpose, since the brief considers it enough, and Room would be the next step if offline support were needed.
 - **Cancellation.** `collectLatest` cancels the previous search when the query is edited, including the HTTP call, and stale results are never shown.
 
 ## Tests
