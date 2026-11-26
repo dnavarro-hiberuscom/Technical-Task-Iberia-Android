@@ -26,7 +26,7 @@ import kotlinx.coroutines.launch
  * the text changes, not 300 ms later.
  */
 internal class SearchViewModel(
-    private val searchStarshipsUsecase: SearchStarshipsUseCase,
+    private val searchStarshipsUseCase: SearchStarshipsUseCase,
 ) : ViewModel() {
 
     // Separate edits can have the same text (type, clear, retype before the collector resumes).
@@ -69,7 +69,7 @@ internal class SearchViewModel(
         _uiState.update { it.copy(content = results.copy(nextPageStatus = NextPageStatus.Loading)) }
         nextPageJob = viewModelScope.launch {
             val content = try {
-                val page = searchStarshipsUsecase(edit.text, nextPage)
+                val page = searchStarshipsUseCase(edit.text, nextPage)
                 SearchContent.Results(
                     starships = (results.starships + page.starships).distinctBy { it.id },
                     nextPage = page.nextPage,
@@ -87,7 +87,7 @@ internal class SearchViewModel(
 
         delay(SearchDebounce)
         val content = try {
-            val page = searchStarshipsUsecase(text)
+            val page = searchStarshipsUseCase(text)
             if (page.starships.isEmpty() && page.nextPage == null) {
                 SearchContent.Empty
             } else {
