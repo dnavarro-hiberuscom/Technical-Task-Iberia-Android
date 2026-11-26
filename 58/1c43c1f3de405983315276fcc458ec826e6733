@@ -1,0 +1,26 @@
+docs/technical-decisions.md
+  s_21702fb7eb765f::t_2ecc574fe27c53 86-91
+README.md
+  s_21702fb7eb765f::t_7a15edf3ef1621 38
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "581c43c1f3de405983315276fcc458ec826e6733",
+  "prompts": {},
+  "humans": {
+    "h_3a16911fd9535c": {
+      "author": "David Navarro <dnavarro@hiberus.com>"
+    }
+  },
+  "sessions": {
+    "s_21702fb7eb765f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "02e57fd6-9837-4122-b4c0-8b9ef594b443",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "David Navarro <dnavarro@hiberus.com>"
+    }
+  }
+}
