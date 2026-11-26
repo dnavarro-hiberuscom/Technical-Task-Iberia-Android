@@ -1,0 +1,31 @@
+gradle/libs.versions.toml
+  s_21702fb7eb765f::t_5ad40d0802921c 54-57,80-83
+AGENTS.md
+  s_21702fb7eb765f::t_5ad40d0802921c 36
+domain/build.gradle.kts
+  s_21702fb7eb765f::t_5ad40d0802921c 19-20
+docs/technical-decisions.md
+  s_21702fb7eb765f::t_5ad40d0802921c 37,43
+.idea/androidTestResultsUserPreferences.xml
+  s_21702fb7eb765f::t_18de5adf964933 1-35
+.idea/deviceManager.xml
+  s_21702fb7eb765f::t_43eda54c0ab5f3 1-13
+.idea/inspectionProfiles/Project_Default.xml
+  s_21702fb7eb765f::t_975b3598a06ffc 1-61
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "c50dfb8dd6324bd7a136778ff3bda28b59cd508e",
+  "prompts": {},
+  "sessions": {
+    "s_21702fb7eb765f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "02e57fd6-9837-4122-b4c0-8b9ef594b443",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "David Navarro <dnavarro@hiberus.com>"
+    }
+  }
+}
