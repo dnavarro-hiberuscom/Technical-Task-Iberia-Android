@@ -34,17 +34,21 @@ I already knew it, and `AsyncImage` plugs straight into Compose. Images have the
 
 ## Version catalog and bundles
 
-All versions live in `gradle/libs.versions.toml`. To avoid repeating the same list of libraries in each module, the catalog defines three *bundles*, which are just named groups:
+All versions live in `gradle/libs.versions.toml`. To avoid repeating the same list of libraries in each module, the catalog defines seven *bundles*, which are just named groups:
 
 | Bundle         | Used by              | What it groups                                                                  |
 |----------------|----------------------|---------------------------------------------------------------------------------|
 | `data`         | `:data`              | Koin, coroutines, Kotlin Serialization, Retrofit with its converter, and OkHttp. |
 | `presentation` | `:presentation`      | Koin for ViewModels and Compose, lifecycle, Compose UI, Material 3 and Coil.    |
-| `domain-test`  | `:domain` tests      | JUnit, `kotlinx-coroutines-test` and MockK.                                     |
+| `app`          | `:app`               | Koin for Android, activity and navigation for Compose, core KTX and Kotlin Serialization. |
+| `app-test`     | `:app` unit tests    | JUnit and Koin test.                                                            |
+| `data-test`    | `:data` tests        | JUnit and `kotlinx-coroutines-test`.                                            |
+| `domain-test`  | `:domain` tests      | JUnit, `kotlinx-coroutines-test` and MockK. `:domain` has no production libraries, so it has no bundle of its own. |
+| `presentation-test` | `:presentation` unit tests | JUnit and `kotlinx-coroutines-test`.                                      |
 
 - Each module uses them in one line, for example `implementation(libs.bundles.data)`. Nothing changes compared to declaring them one by one (versions still come from the catalog), but I find it more practical to keep each layer's libraries in a single place.
 - BOMs (`koin-bom`, `compose-bom`) go separately with `platform(...)`, in each module.
-- Anything only one module uses (Compose tests, `ui-tooling`, `koin-test`) stays on its own in that module's `build.gradle.kts`.
+- Anything only one module uses (Compose instrumented tests, `ui-tooling`) stays on its own in that module's `build.gradle.kts`.
 - To add a shared library, declare it in `[libraries]` and add its alias to the right bundle.
 
 ## Modules

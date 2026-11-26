@@ -30,10 +30,8 @@ dependencies {
     implementation(libs.bundles.presentation)
     debugImplementation(libs.androidx.compose.ui.tooling)
 
-    testImplementation(libs.junit)
-    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.bundles.presentation.test)
 
-    androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.kotlinx.coroutines.core)

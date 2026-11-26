@@ -33,7 +33,7 @@ Before changing a module, also read its guide (`<module>/AGENTS.md`). The reason
   - Colors, typography and dimensions (`dp`, `sp`) live in `presentation/designsystem`.
   - User-facing text lives in resources, in English (`values/`) and Spanish (`values-es/`).
 - **Constants:** one per meaningful value, with a name and a unit (`SearchDebounce`, `SearchCacheTtl`).
-- **Dependencies:** declared in `gradle/libs.versions.toml`; shared ones go in their bundle (`data`, `presentation`, `domain-test`). BOMs are added with `platform(...)` in each module.
+- **Dependencies:** declared in `gradle/libs.versions.toml`; shared ones go in their bundle (`app`, `data`, `presentation`, their `-test` ones, and `domain-test`). BOMs are added with `platform(...)` in each module.
 - **Test data:** only in tests and previews, never in production code.
 
 ## Tests
