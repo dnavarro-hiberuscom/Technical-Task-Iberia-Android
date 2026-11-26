@@ -51,6 +51,17 @@ kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-
 
 [bundles]
 # Platforms (koin-bom, compose-bom) stay outside the bundles and are declared in each module.
+app = [
+    "koin-android",
+    "androidx-activity-compose",
+    "androidx-navigation-compose",
+    "androidx-core-ktx",
+    "kotlinx-serialization-json",
+]
+app-test = [
+    "junit",
+    "koin-test",
+]
 data = [
     "koin-core",
     "kotlinx-coroutines-core",
@@ -58,6 +69,10 @@ data = [
     "retrofit",
     "retrofit-converter-kotlinx-serialization",
     "okhttp",
+]
+data-test = [
+    "junit",
+    "kotlinx-coroutines-test",
 ]
 domain-test = [
     "junit",
@@ -77,6 +92,10 @@ presentation = [
     "androidx-compose-ui-tooling-preview",
     "coil-compose",
     "coil-network-okhttp",
+]
+presentation-test = [
+    "junit",
+    "kotlinx-coroutines-test",
 ]
 
 [plugins]

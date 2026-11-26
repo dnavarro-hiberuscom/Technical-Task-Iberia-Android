@@ -48,16 +48,11 @@ dependencies {
     implementation(project(":data"))
 
     implementation(platform(libs.koin.bom))
-    implementation(libs.koin.android)
     implementation(platform(libs.androidx.compose.bom))
-    implementation(libs.androidx.activity.compose)
-    implementation(libs.androidx.navigation.compose)
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.kotlinx.serialization.json)
+    implementation(libs.bundles.app)
 
-    testImplementation(libs.junit)
     testImplementation(platform(libs.koin.bom))
-    testImplementation(libs.koin.test)
+    testImplementation(libs.bundles.app.test)
 
     // Test-only: the instrumented flow test swaps the repository for a fake with controlled data.
     androidTestImplementation(project(":domain"))

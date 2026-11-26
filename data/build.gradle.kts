@@ -24,6 +24,5 @@ dependencies {
     implementation(platform(libs.koin.bom))
     implementation(libs.bundles.data)
 
-    testImplementation(libs.junit)
-    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.bundles.data.test)
 }
