@@ -1,0 +1,34 @@
+data/build.gradle.kts
+  s_21702fb7eb765f::t_d9e57b16b15485 27
+gradle/libs.versions.toml
+  s_21702fb7eb765f::t_d9e57b16b15485 62-65,71-74
+presentation/build.gradle.kts
+  s_21702fb7eb765f::t_d9e57b16b15485 33,35
+app/build.gradle.kts
+  s_21702fb7eb765f::t_d9e57b16b15485 65
+AGENTS.md
+  s_21702fb7eb765f::t_fb6d93d557df37 36
+docs/technical-decisions.md
+  s_21702fb7eb765f::t_1a73d7dcff0cd8 37,44-45,48-49
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "5a4137d2bc960e607eded2f0f50046e93060f71b",
+  "prompts": {},
+  "humans": {
+    "h_3a16911fd9535c": {
+      "author": "David Navarro <dnavarro@hiberus.com>"
+    }
+  },
+  "sessions": {
+    "s_21702fb7eb765f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "02e57fd6-9837-4122-b4c0-8b9ef594b443",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "David Navarro <dnavarro@hiberus.com>"
+    }
+  }
+}
